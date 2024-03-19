@@ -1,0 +1,728 @@
+﻿
+
+class ImageFunctions {
+    constructor(element, toolbar) {
+        this.element = element
+        this.toolbar = toolbar
+    }
+
+    handleFileInputSubmit = () => {
+        this.element.src = URL.createObjectURL(this.toolbar.fileInput.files.item(0))
+        this.element.style.backgroundColor = "transparent"
+    }
+
+
+    handleFileInput = () => {
+        let file = URL.createObjectURL(this.toolbar.fileInput.files.item(0))
+        this.toolbar.img.src = file
+    }
+
+    enableDragMode = () => {
+
+        this.dragElement(this.element)
+    }
+
+    disableDragMode = () => {
+        this.disableDragElement(this.element)
+
+    }
+
+
+    disableDragElement = (elmnt) => {
+
+        elmnt.onmousedown = undefined
+    }
+
+    dragElement = (elmnt) => {
+
+
+        elmnt.onmousedown = this.dragElementDown
+        elmnt.onmouseleave = this.stopDrag
+        elmnt.onmouseup = this.stopDrag
+
+    }
+
+    stopDrag = (event) => {
+        event.currentTarget.removeEventListener("mousemove", this.onMouseDrag)
+    }
+
+    dragElementDown = (event) => {
+
+        event.currentTarget.addEventListener("mousemove", this.onMouseDrag)
+    }
+
+    onMouseDrag({ movementX, movementY }) {
+        let container = document.getElementById("page");
+        let containerRect = container.getBoundingClientRect();
+
+        let elementStyles = window.getComputedStyle(this);
+        let elementLeft = parseFloat(elementStyles.left) || 0; // Use 0 if left is not defined
+        let elementTop = parseFloat(elementStyles.top) || 0; // Use 0 if top is not defined
+        let elementRect = this.getBoundingClientRect()
+
+        let newLeft = elementLeft + movementX;
+        let newTop = elementTop + movementY;
+
+        // Calculate the boundaries based on the container's position and dimensions
+        let minLeft = containerRect.left - elementRect.left; // Adjusted for container's position
+        let maxLeft = containerRect.right - containerRect.left - elementRect.width; // Adjusted for container's position
+        let minTop = containerRect.top - elementRect.top; // Adjusted for container's position
+        let maxTop = containerRect.bottom - containerRect.top - elementRect.height; // Adjusted for container's position
+
+        // Ensure the element stays within the boundaries
+        newLeft = Math.max(minLeft, Math.min(newLeft, maxLeft));
+        newTop = Math.max(minTop, Math.min(newTop, maxTop));
+
+        // Update the element's position
+        this.style.left = `${newLeft}px`;
+        this.style.top = `${newTop}px`;
+    }
+
+    enableImageResize = () => {
+        this.dragImageElement(this.element)
+    }
+
+    disableImageResize = () => {
+        this.element.onmousedown = undefined
+    }
+
+    dragImageElement = (elmnt) => {
+
+
+
+        // otherwise, move the DIV from anywhere inside the DIV:
+        elmnt.onmousedown = this.dragImgElement
+        elmnt.onmouseleave = this.stopImageDrag
+        elmnt.onmouseup = this.stopImageDrag
+
+    }
+
+    stopImageDrag = (event) => {
+        event.currentTarget.removeEventListener("mousemove", this.onImageDrag)
+    }
+
+    dragImgElement = (event) => {
+
+        event.currentTarget.addEventListener("mousemove", this.onImageDrag)
+    }
+
+    onImageDrag({ movementX, movementY }) {
+        let container = document.getElementById("page");
+        let containerRect = container.getBoundingClientRect();
+
+        let elementStyles = window.getComputedStyle(this);
+        let elementWidth = parseFloat(elementStyles.width) || 0; // Use 0 if width is not defined
+        let elementHeight = parseFloat(elementStyles.height) || 0; // Use 0 if height is not defined
+        let elementRect = this.getBoundingClientRect();
+
+        let newWidth = elementWidth + movementX;
+        let newHeight = elementHeight + movementY;
+
+        // Calculate the maximum width and height to avoid overflowing the container
+        let maxWidth = containerRect.right - elementRect.left; // Maximum width without overflowing the container horizontally
+        let maxHeight = containerRect.bottom - elementRect.top; // Maximum height without overflowing the container vertically
+
+        // Ensure the element stays within the maximum width and height
+        newWidth = Math.min(newWidth, maxWidth);
+        newHeight = Math.min(newHeight, maxHeight);
+
+        // Update the element's size
+        this.style.width = `${newWidth}px`;
+        this.style.height = `${newHeight}px`;
+    }
+}
+
+
+
+class TextFunctions {
+
+    constructor(element) {
+        this.element = element
+    }
+
+    handleEditText = () => {
+        console.log(this.element)
+        console.log(this.element.firstChild)
+        this.element.classList.add("summernote")
+        let top = this.element.style.top
+        let left = this.element.style.left
+        let width = this.element.style.width
+        let height = this.element.style.height
+        $(document).ready(function () {
+            $('.summernote').summernote({
+                focus: true, airMode: true, popover: {
+                    air: [
+                        ['style', ['style']],
+                        ['font', ['bold', 'underline', 'clear']],
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['insert', ['link']]
+                    ]
+                },
+                fontColor: '#000000'
+            });
+            $('.note-editor').css({
+                color: "black",
+                position: "absolute",
+                top: top,
+                left: left,
+                width: width,
+                height: height
+            })
+        });
+    }
+
+    handleDisableEditText = () => {
+        var markup = $('.summernote').summernote('code');
+
+        //  this.element.innerHTML = markup
+
+        $('.summernote').summernote('destroy');
+
+        $('.summernote').removeClass('summernote')
+    }
+
+
+
+
+
+
+    findParentWithTag = (element, tagName) => {
+        let parent = element.parentElement;
+        while (parent) {
+            if (parent.tagName.toLowerCase() === tagName.toLowerCase()) {
+                return parent;
+            }
+            parent = parent.parentElement;
+        }
+        return null; // If no parent with the specified tag name is found
+    }
+
+    checkUndefinedNullEmpty = (check) => {
+        if (check == undefined || check == null || check == "") {
+            return true
+        } else {
+            return false
+        }
+    }
+
+
+
+    boxResize = () => {
+        this.initResizeBoxElement(this.element)
+    }
+
+    boxDisableResize = () => {
+        this.element.onmousedown = null
+    }
+
+    initResizeBoxElement = (elmnt) => {
+
+
+
+        // otherwise, move the DIV from anywhere inside the DIV:
+        elmnt.onmousedown = this.resizeBoxElement
+        elmnt.onmouseleave = this.stopBoxResize
+        elmnt.onmouseup = this.stopBoxResize
+
+    }
+
+    stopBoxResize = (event) => {
+        event.currentTarget.removeEventListener("mousemove", this.onBoxResize)
+    }
+
+    resizeBoxElement = (event) => {
+
+        event.currentTarget.addEventListener("mousemove", this.onBoxResize)
+    }
+
+    onBoxResize({ movementX, movementY }) {
+        let container = document.getElementById("page");
+        let containerRect = container.getBoundingClientRect();
+
+        let elementStyles = window.getComputedStyle(this);
+        let elementWidth = parseFloat(elementStyles.width) || 0; // Use 0 if width is not defined
+        let elementHeight = parseFloat(elementStyles.height) || 0; // Use 0 if height is not defined
+        let elementRect = this.getBoundingClientRect();
+
+        let newWidth = elementWidth + movementX;
+        let newHeight = elementHeight + movementY;
+
+        // Calculate the maximum width and height to avoid overflowing the container
+        let maxWidth = containerRect.right - elementRect.left; // Maximum width without overflowing the container horizontally
+        let maxHeight = containerRect.bottom - elementRect.top; // Maximum height without overflowing the container vertically
+
+        // Ensure the element stays within the maximum width and height
+        newWidth = Math.min(newWidth, maxWidth);
+        newHeight = Math.min(newHeight, maxHeight);
+
+        // Update the element's size
+        this.style.width = `${newWidth}px`;
+        this.style.height = `${newHeight}px`;
+    }
+
+
+    enableDragMode = () => {
+        this.element.contentEditable = false
+        this.element.style.userSelect = "none"
+        this.dragElement(this.element)
+    }
+
+    disableDragMode = () => {
+        this.disableDragElement(this.element)
+        //this.element.contentEditable = true
+        this.element.style.userSelect = "default"
+    }
+
+
+    disableDragElement = (elmnt) => {
+
+        elmnt.onmousedown = null
+    }
+
+    dragElement = (elmnt) => {
+
+
+        elmnt.onmousedown = this.dragElementDown
+        elmnt.onmouseleave = this.stopDrag
+        elmnt.onmouseup = this.stopDrag
+
+    }
+
+    stopDrag = (event) => {
+        event.currentTarget.removeEventListener("mousemove", this.onMouseDrag)
+    }
+
+    dragElementDown = (event) => {
+
+        event.currentTarget.addEventListener("mousemove", this.onMouseDrag)
+    }
+
+
+    onMouseDrag({ movementX, movementY }) {
+        let container = document.getElementById("page");
+        let containerRect = container.getBoundingClientRect();
+
+        let elementStyles = window.getComputedStyle(this);
+        let elementLeft = parseFloat(elementStyles.left) || 0; // Use 0 if left is not defined
+        let elementTop = parseFloat(elementStyles.top) || 0; // Use 0 if top is not defined
+        let elementRect = this.getBoundingClientRect()
+
+        let newLeft = elementLeft + movementX;
+        let newTop = elementTop + movementY;
+
+        // Calculate the boundaries based on the container's position and dimensions
+        let minLeft = containerRect.left - elementRect.left; // Adjusted for container's position
+        let maxLeft = containerRect.right - containerRect.left - elementRect.width; // Adjusted for container's position
+        let minTop = containerRect.top - elementRect.top; // Adjusted for container's position
+        let maxTop = containerRect.bottom - containerRect.top - elementRect.height; // Adjusted for container's position
+
+        // Ensure the element stays within the boundaries
+        newLeft = Math.max(minLeft, Math.min(newLeft, maxLeft));
+        newTop = Math.max(minTop, Math.min(newTop, maxTop));
+
+        // Update the element's position
+        this.style.left = `${newLeft}px`;
+        this.style.top = `${newTop}px`;
+    }
+}
+
+class ImageToolbar {
+    constructor(element) {
+        this.toolbarDiv = document.getElementById("toolbarDiv")
+        this.registerElement(element)
+        this.page = document.getElementById("page")
+    }
+
+    registerElement = (element) => {
+        if (element.classList.contains("image")) {
+            this.element = element
+        } else {
+            console.error("element type not suitable for toolbar")
+        }
+    }
+    constructToolbar = () => {
+        this.dragButton = document.createElement("button")
+        this.dragButton.innerText = "Enable Drag"
+
+
+        this.disableDragButton = document.createElement("button")
+        this.disableDragButton.innerText = "Disable Drag"
+
+
+        this.resizeButton = document.createElement("button")
+        this.resizeButton.innerText = "Resize Image"
+
+
+        this.disableResizeButton = document.createElement("button")
+        this.disableResizeButton.innerText = "Disable Resize"
+
+
+        this.fileInput = document.createElement("input")
+        this.fileInput.type = "file"
+        this.fileInput.innerText = "Input Image"
+        this.fileInput.style.cursor = "pointer"
+
+
+        this.img = document.createElement("img")
+        this.img.style.width = "25px"
+        this.img.style.height = "25px"
+        this.img.style.backgroundColor = "grey"
+        this.fileInputSubmit = document.createElement("button")
+        this.fileInputSubmit.innerText = "Submit Image"
+        this.div = document.createElement("div")
+        this.div.appendChild(this.fileInput)
+        this.div.appendChild(this.img)
+
+
+        this.toolbarDiv.appendChild(this.dragButton)
+        this.toolbarDiv.appendChild(this.disableDragButton)
+        this.toolbarDiv.appendChild(this.resizeButton)
+        this.toolbarDiv.appendChild(this.disableResizeButton)
+        this.toolbarDiv.appendChild(this.fileInputSubmit)
+        this.toolbarDiv.appendChild(this.div)
+
+
+    }
+
+
+
+
+
+}
+
+class TextToolbar {
+
+    constructor(element) {
+        this.toolbarDiv = document.getElementById("toolbarDiv")
+        this.registerElement(element)
+        this.page = document.getElementById("page")
+    }
+
+
+
+    registerElement = (element) => {
+        if (element.classList.contains("text")) {
+            this.element = element
+        } else {
+            console.error("element type not suitable for toolbar")
+        }
+    }
+
+
+    constructToolbar = () => {
+
+        this.dragButton = document.createElement("button")
+        this.dragButton.innerText = "Enable Drag"
+
+        this.disableDragButton = document.createElement("button")
+        this.disableDragButton.innerText = "Disable Drag"
+
+        this.resizeButton = document.createElement("button")
+        this.resizeButton.innerText = "Enable Resize"
+
+        this.disableResizeButton = document.createElement("button")
+        this.disableResizeButton.innerText = "Disable Resize"
+
+        this.editTextBtn = document.createElement("button")
+        this.editTextBtn.innerText = "Edit Text"
+
+        this.disabelEditText = document.createElement("button")
+        this.disabelEditText.innerText = "Disable Edit Text"
+
+        this.toolbarDiv.appendChild(this.editTextBtn)
+        this.toolbarDiv.appendChild(this.disabelEditText)
+        this.toolbarDiv.appendChild(this.dragButton)
+        this.toolbarDiv.appendChild(this.disableDragButton)
+        this.toolbarDiv.appendChild(this.resizeButton)
+        this.toolbarDiv.appendChild(this.disableResizeButton)
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+}
+
+class Utility {
+    constructor(element) {
+        this.element = element
+    }
+
+    selectElement = () => {
+        console.log("Must override selectElement")
+    }
+
+    deselectElement = () => {
+        console.log("Must override deselectElement")
+    }
+
+    constructToolbar = () => {
+        console.log("Must override constructToolbar")
+    }
+}
+class ImageUtility extends Utility {
+    constructor(element) {
+        super(element)
+        this.toolbar = new ImageToolbar(element)
+
+        this.functions = new ImageFunctions(element, this.toolbar)
+    }
+
+
+
+    selectElement = () => {
+        this.functions.disableDragMode()
+
+    }
+
+    deselectElement = () => {
+        this.enableDrag()
+    }
+
+    constructToolbar = () => {
+        this.toolbar.constructToolbar()
+        this.attachFileInputHandler(this.functions.handleFileInput)
+        this.attachFileInputSubmitHandler()
+        this.initEnableImageDrag()
+        this.initDisableImageDrag()
+        this.initEnableImageResize()
+        this.initDisableImageResize()
+
+    }
+
+    enableDrag = () => {
+        this.functions.enableDragMode()
+    }
+
+
+    attachFileInputSubmitHandler = () => {
+        this.toolbar.fileInputSubmit.addEventListener("click", this.functions.handleFileInputSubmit)
+    }
+
+    attachFileInputHandler = (handler) => {
+        this.toolbar.fileInput.addEventListener("change", handler)
+    }
+
+    initEnableImageDrag = () => {
+        this.toolbar.dragButton.addEventListener("click", this.functions.enableDragMode)
+    }
+
+    initDisableImageDrag = () => {
+        this.toolbar.disableDragButton.addEventListener("click", this.functions.disableDragMode)
+    }
+
+    initEnableImageResize = () => {
+        this.toolbar.resizeButton.addEventListener("click", this.functions.enableImageResize)
+    }
+
+    initDisableImageResize = () => {
+        this.toolbar.disableResizeButton.addEventListener("click", this.functions.disableImageResize)
+    }
+
+}
+
+class TextUtility extends Utility {
+    constructor(element) {
+        super(element)
+        this.toolbar = new TextToolbar(element)
+
+        this.functions = new TextFunctions(element)
+    }
+
+    selectElement = () => {
+        this.element.style.border = "solid 1px red"
+        this.functions.disableDragMode()
+
+    }
+
+    deselectElement = () => {
+        this.element.style.border = "none"
+        this.functions.handleDisableEditText()
+        this.enableDrag()
+    }
+
+    constructToolbar = () => {
+        this.toolbar.constructToolbar()
+        this.initBoxResizeBtn()
+        this.initBoxDisableResizeBtn()
+        this.initEditTextBtn()
+        this.initDisableEditTextBtn()
+        this.initEnableDragBtn()
+        this.initDisableDragBtn()
+    }
+
+    enableDrag = () => {
+        this.functions.enableDragMode()
+    }
+
+
+    initBoxResizeBtn = () => {
+        this.toolbar.resizeButton.addEventListener("click", this.functions.boxResize)
+    }
+
+    initBoxDisableResizeBtn = () => {
+        this.toolbar.disableResizeButton.addEventListener("click", this.functions.boxDisableResize)
+    }
+
+    initEditTextBtn = () => {
+        this.toolbar.editTextBtn.addEventListener("click", this.functions.handleEditText)
+    }
+
+    initDisableEditTextBtn = () => {
+        this.toolbar.disabelEditText.addEventListener("click", this.functions.handleDisableEditText)
+    }
+
+    initEnableDragBtn = () => {
+        this.toolbar.dragButton.addEventListener("click", this.functions.enableDragMode)
+    }
+
+    initDisableDragBtn = () => {
+        this.toolbar.disableDragButton.addEventListener("click", this.functions.disableDragMode)
+    }
+
+}
+class UtilityFactory {
+
+    // Method to create and return a new HTML element with applied styles and properties
+    createElement(tagName, properties = {}, styles = {}) {
+        const element = document.createElement(tagName);
+        Object.assign(element, properties);
+        Object.assign(element.style, styles);
+        return element;
+    }
+
+    // Method to construct the text utility
+    constructTextUtility = () => {
+        const page = document.getElementById("page");
+        const font = this.createElement('font', { innerText: 'New Text' }, { color: 'black' });
+        const label = this.createElement('p', { draggable: false, className: 'comp' }, {});
+        label.appendChild(font);
+
+        const labelDivStyles = {
+            width: '300px', height: '200px', overflowY: 'auto',
+            position: 'absolute', wordWrap: 'break-word', zIndex: '1'
+        };
+        const labelDiv = this.createElement('div', { className: 'text drag' }, labelDivStyles);
+        labelDiv.appendChild(label);
+        page.appendChild(labelDiv);
+    }
+
+    // Method to construct the image utility
+    constructImageUtility = () => {
+        const page = document.getElementById("page");
+        const imgStyles = { backgroundColor: 'grey', zIndex: '1' };
+        const img = this.createElement('img', { className: 'image drag', draggable: false }, imgStyles);
+        page.appendChild(img);
+    }
+
+    // Method to get the utility based on the element type
+    getUtility = (element) => {
+        if (element.classList.contains("text")) {
+            return new TextUtility(element);
+        } else if (element.classList.contains("image")) {
+            return new ImageUtility(element);
+        } else {
+            console.log("Invalid element");
+            return null; // It's better to return null for invalid cases for consistency
+        }
+    }
+}
+
+class UtilityHelper {
+    constructor() {
+        this.selectedEl = undefined;
+        this.toolbarDiv = document.getElementById("toolbarDiv");
+        this.select = false;
+        this.utilityFactory = new UtilityFactory(); // Initialize once to avoid repeated instantiations
+    }
+
+    toggleSelect = () => {
+        this.select = !this.select;
+    }
+
+    // Combining the enable/disable functions for better DRY compliance
+    toggleSelectability = (selector, enable) => {
+        document.querySelectorAll(selector).forEach(element => {
+            const utility = this.utilityFactory.getUtility(element);
+            if (enable) {
+
+            } else {
+                utility.deselectElement();
+            }
+        });
+    }
+
+    enableAllSelect = () => {
+        // If there's functionality for enabling, add here
+
+    }
+
+    disableAllSelect = () => {
+        this.toggleSelectability(".image", false);
+        this.toggleSelectability(".text", false);
+        this.disableAllDrag();
+    }
+
+    disableAllDrag = () => {
+        document.querySelectorAll(".drag").forEach(this.disableDragElement);
+    }
+
+    disableDragElement = (element) => {
+        element.classList.remove("drag")
+
+    }
+
+    registerAllHandlers = () => {
+        this.registerElementHandlers(".image", this.registerImageHandlers);
+        this.registerElementHandlers(".text", this.registerTextHandlers);
+    }
+
+    registerElementHandlers = (selector, handlerFunction) => {
+        document.querySelectorAll(selector).forEach(element => {
+            handlerFunction.call(this, element); // using call() to maintain 'this' context
+        });
+    }
+
+    registerImageHandlers = (imgElement) => {
+        const imageUtility = this.utilityFactory.getUtility(imgElement);
+        imgElement.addEventListener("click", () => this.selectHandler(imageUtility));
+    }
+
+    registerTextHandlers = (textElement) => {
+        const textUtility = this.utilityFactory.getUtility(textElement);
+        console.log(textElement); // Consider whether this log is needed; if for debugging, it's okay.
+        this.registerCompHandlers(textUtility, textElement.querySelectorAll(".style"));
+        textElement.addEventListener("click", () => this.selectHandler(textUtility));
+    }
+
+    registerCompHandlers = (textUtility, compList) => {
+        compList.forEach(comp => textUtility.attachCompClickHandler(comp));
+    }
+
+    selectHandler = (utilityElement) => {
+        if (!this.select) return; // Early return to reduce nesting
+
+        if (this.selectedEl && this.selectedEl !== utilityElement) {
+            this.selectedEl.deselectElement();
+            this.selectedEl.enableDrag()
+            this.toolbarDiv.innerHTML = ""; // Clear once when changing
+        }
+
+        if (!this.selectedEl || this.selectedEl !== utilityElement) {
+            console.log(utilityElement.element); // Assuming necessary for debugging
+
+            utilityElement.constructToolbar();
+            utilityElement.selectElement();
+            this.selectedEl = utilityElement;
+            this.selectedEl.functions.disableDragMode()
+        }
+    }
+}

@@ -81,3 +81,49 @@ describe('TextFunctions - Drag functionality', () => {
         expect(mockElement.onmousedown).toBeNull();
     });
 });
+
+describe('TextFunctions - Editing functionalities', () => {
+    let textFunctions;
+    let mockElement;
+
+    beforeEach(() => {
+        // Setting up the mystical environment for our tests
+        mockElement = document.createElement('div');
+        document.body.appendChild(mockElement);
+        textFunctions = new TextFunctions(mockElement);
+    });
+
+    afterEach(() => {
+        // Cleansing our testing environment after each test
+        document.body.removeChild(mockElement);
+        $('.summernote').summernote('destroy');  // Ensuring Summernote is fully cleansed from our realm
+    });
+
+    it('handleEditText should enable summernote on the element', () => {
+        // Activating the editing mode, which should add the 'summernote' class
+        textFunctions.handleEditText();
+
+        // We must wait for the Summernote to initialize, as it is bound to the document.ready event
+        setTimeout(() => {
+            // Verifying the mystical transformation
+            expect($(mockElement).hasClass('summernote')).toBeTrue();
+            // Additionally, we could check if the Summernote editor has been properly initiated
+            expect($('.note-editor').length).toBeGreaterThan(0);
+        }, 500);  // Adjust the time based on initialization time of Summernote in your realm
+    });
+
+    it('handleDisableEditText should disable summernote on the element', () => {
+        // First, let's enable the edit mode to have something to disable
+        textFunctions.handleEditText();
+
+        // Disabling the editing mode, which should remove the 'summernote' class
+        setTimeout(() => {  // We wait for the editor to initialize before we disable it
+            textFunctions.handleDisableEditText();
+
+            // Verifying the removal of the mystical enchantment
+            expect($(mockElement).hasClass('summernote')).toBeFalse();
+            // Ensure the Summernote editor itself is destroyed
+            expect($('.note-editor').length).toBe(0);
+        }, 500);  // Adjust this timeout as necessary
+    });
+});

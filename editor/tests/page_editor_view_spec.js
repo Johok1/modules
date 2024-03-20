@@ -79,3 +79,56 @@ describe('View Class Tests', () => {
 
     // Add more tests as necessary for other methods and behaviors
 });
+
+describe('Utility Creation and Event Handling', () => {
+    let view;
+    let mockTextElement, mockImageElement;
+
+    beforeEach(() => {
+        // Mock elements
+        mockTextElement = document.createElement('div');
+        mockImageElement = document.createElement('div');
+        mockTextElement.className = 'text';
+        mockImageElement.className = 'image';
+        const mockSelectBtn = document.createElement('button');
+
+        // Spies and stubs
+        spyOn(document, 'getElementById').and.callFake((id) => {
+            if (id === 'textBtn') return mockTextElement;
+            if (id === 'imgBtn') return mockImageElement;
+            if (id === 'toggleSelectBtn') return mockSelectBtn;
+            // Add more cases as needed
+        });
+        spyOn(document, 'querySelectorAll').and.callFake((selector) => {
+            if (selector === '.text') return [mockTextElement];
+            if (selector === '.image') return [mockImageElement];
+            // Add more cases as needed
+            return [];
+        });
+
+        // Initialize View and its elements
+        view = new View();
+    });
+
+    describe('when utilities are created', () => {
+        beforeEach(() => {
+            spyOn(view.utilityHelper, 'registerElementHandlers').and.callThrough();
+            // Prepare the environment for testing utility creation
+            view.initializeEventListeners();
+        });
+
+        it('should apply selection handlers to text utilities', () => {
+            mockTextElement.click(); // Simulate text button click to create text utility
+            expect(view.utilityHelper.registerElementHandlers).toHaveBeenCalledWith('.text', jasmine.any(Function));
+            // You can add more specific checks here, such as whether specific handlers were registered
+        });
+
+        it('should apply selection handlers to image utilities', () => {
+            mockImageElement.click(); // Simulate image button click to create image utility
+            expect(view.utilityHelper.registerElementHandlers).toHaveBeenCalledWith('.image', jasmine.any(Function));
+            // You can add more specific checks here, such as whether specific handlers were registered
+        });
+    });
+
+    // Add more tests as necessary
+});

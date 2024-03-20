@@ -370,6 +370,7 @@ class View {
 
 }
 
+const app = new View()
 class ImageToolbar {
     constructor(element) {
         this.toolbarDiv = document.getElementById("toolbarDiv")
@@ -692,6 +693,10 @@ class ImageFunctions {
     constructor(element, toolbar) {
         this.element = element
         this.toolbar = toolbar
+    }
+
+    enableFileDrop = () => {
+
     }
 
     handleFileInputSubmit = () => {

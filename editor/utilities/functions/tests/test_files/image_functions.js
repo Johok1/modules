@@ -4,6 +4,10 @@ class ImageFunctions {
         this.toolbar = toolbar
     }
 
+    enableFileDrop = () => {
+
+    }
+
     handleFileInputSubmit = () => {
         this.element.src = URL.createObjectURL(this.toolbar.fileInput.files.item(0))
         this.element.style.backgroundColor = "transparent"

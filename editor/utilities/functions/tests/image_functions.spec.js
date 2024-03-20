@@ -59,3 +59,56 @@ describe('ImageFunctions', () => {
         expect(mockElement.onmousedown).toBeNull(); // Expecting it to be cleared
     });
 });
+
+describe('ImageFunctions - file drop handling', () => {
+    let imageFunctions;
+    let mockElement;
+    let mockToolbar;
+    let file;
+    let fileUrl = 'mocked_blob_url';
+
+    beforeEach(() => {
+        mockElement = document.createElement('img');
+        document.body.appendChild(mockElement);
+        file = new Blob(['test'], { type: 'image/png' });
+        mockToolbar = {
+            fileInput: {
+                files: {
+                    item: () => file
+                }
+            },
+            img: document.createElement('img')
+        };
+        imageFunctions = new ImageFunctions(mockElement, mockToolbar);
+        spyOn(URL, 'createObjectURL').and.returnValue(fileUrl);
+
+        // Assuming enableFileDrop method exists and is responsible for setting up the drop event listener
+        imageFunctions.enableFileDrop();
+    });
+
+    afterEach(() => {
+        document.body.removeChild(mockElement);
+    });
+
+    it('should update element src on file drop', () => {
+        // Create a basic DragEvent without the dataTransfer property
+        const dropEvent = new DragEvent('drop', {
+            bubbles: true
+        });
+
+        // Manually define the dataTransfer property with the necessary details
+        Object.defineProperty(dropEvent, 'dataTransfer', {
+            value: {
+                files: [file]
+            },
+        });
+
+        // Dispatch the event with the now properly mocked dataTransfer property
+        mockElement.dispatchEvent(dropEvent);
+
+        // Proceed with your assertions as before
+        expect(imageFunctions.element.src).toContain(fileUrl);
+    });
+
+});
+

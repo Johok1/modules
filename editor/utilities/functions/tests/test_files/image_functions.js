@@ -22,13 +22,13 @@ class ImageFunctions {
 
     disableDragMode = () => {
         this.disableDragElement(this.element)
-
+       
     }
 
 
     disableDragElement = (elmnt) => {
 
-        elmnt.onmousedown = undefined
+        elmnt.onmousedown = null
     }
 
     dragElement = (elmnt) => {

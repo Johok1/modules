@@ -1,4 +1,3 @@
-
 class Utility {
     constructor(element) {
         this.element = element
@@ -15,6 +14,139 @@ class Utility {
     constructToolbar = () => {
         console.log("Must override constructToolbar")
     }
+
+    enableDrag = () => {
+        console.log("Must override enableDrag")
+    }
+}
+
+
+
+
+
+class ImageUtility extends Utility {
+    constructor(element) {
+        super(element)
+        this.toolbar = new ImageToolbar(element)
+
+        this.functions = new ImageFunctions(element, this.toolbar)
+    }
+
+
+
+    selectElement = () => {
+        this.functions.disableDragMode()
+
+    }
+
+    deselectElement = () => {
+        this.enableDrag()
+    }
+
+    constructToolbar = () => {
+        this.toolbar.constructToolbar()
+        this.attachFileInputHandler(this.functions.handleFileInput)
+        this.attachFileInputSubmitHandler()
+        this.initEnableImageDrag()
+        this.initDisableImageDrag()
+        this.initEnableImageResize()
+        this.initDisableImageResize()
+
+    }
+
+    enableDrag = () => {
+        this.functions.enableDragMode()
+    }
+
+
+    attachFileInputSubmitHandler = () => {
+        this.toolbar.fileInputSubmit.addEventListener("click", this.functions.handleFileInputSubmit)
+    }
+
+    attachFileInputHandler = (handler) => {
+        this.toolbar.fileInput.addEventListener("change", handler)
+    }
+
+    initEnableImageDrag = () => {
+        this.toolbar.dragButton.addEventListener("click", this.functions.enableDragMode)
+    }
+
+    initDisableImageDrag = () => {
+        this.toolbar.disableDragButton.addEventListener("click", this.functions.disableDragMode)
+    }
+
+    initEnableImageResize = () => {
+        this.toolbar.resizeButton.addEventListener("click", this.functions.enableImageResize)
+    }
+
+    initDisableImageResize = () => {
+        this.toolbar.disableResizeButton.addEventListener("click", this.functions.disableImageResize)
+    }
+
+}
+
+class ImageToolbar {
+    constructor(element) {
+        this.toolbarDiv = document.getElementById("toolbarDiv")
+        this.registerElement(element)
+        this.page = document.getElementById("page")
+    }
+
+    registerElement = (element) => {
+        if (element.classList.contains("image")) {
+            this.element = element
+        } else {
+            console.error("element type not suitable for toolbar")
+        }
+    }
+    constructToolbar = () => {
+        this.dragButton = document.createElement("button")
+        this.dragButton.innerText = "Enable Drag"
+
+
+        this.disableDragButton = document.createElement("button")
+        this.disableDragButton.innerText = "Disable Drag"
+
+
+        this.resizeButton = document.createElement("button")
+        this.resizeButton.innerText = "Resize Image"
+
+
+        this.disableResizeButton = document.createElement("button")
+        this.disableResizeButton.innerText = "Disable Resize"
+
+
+        this.fileInput = document.createElement("input")
+        this.fileInput.type = "file"
+        this.fileInput.innerText = "Input Image"
+        this.fileInput.style.cursor = "pointer"
+
+
+        this.img = document.createElement("img")
+        this.img.style.width = "25px"
+        this.img.style.height = "25px"
+        this.img.style.backgroundColor = "grey"
+        this.fileInputSubmit = document.createElement("button")
+        this.fileInputSubmit.innerText = "Submit Image"
+        this.div = document.createElement("div")
+        this.div.appendChild(this.fileInput)
+        this.div.appendChild(this.img)
+
+
+        this.toolbarDiv.appendChild(this.dragButton)
+        this.toolbarDiv.appendChild(this.disableDragButton)
+        this.toolbarDiv.appendChild(this.resizeButton)
+        this.toolbarDiv.appendChild(this.disableResizeButton)
+        this.toolbarDiv.appendChild(this.fileInputSubmit)
+        this.toolbarDiv.appendChild(this.div)
+
+
+    }
+
+
+
+
+
 }
 class ImageFunctions {
     constructor(element, toolbar) {
@@ -40,13 +172,13 @@ class ImageFunctions {
 
     disableDragMode = () => {
         this.disableDragElement(this.element)
-
+       
     }
 
 
     disableDragElement = (elmnt) => {
 
-        elmnt.onmousedown = undefined
+        elmnt.onmousedown = null
     }
 
     dragElement = (elmnt) => {
@@ -146,121 +278,4 @@ class ImageFunctions {
         this.style.width = `${newWidth}px`;
         this.style.height = `${newHeight}px`;
     }
-}
-
-
-class ImageToolbar {
-    constructor(element) {
-        this.toolbarDiv = document.getElementById("toolbarDiv")
-        this.registerElement(element)
-        this.page = document.getElementById("page")
-    }
-
-    registerElement = (element) => {
-        if (element.classList.contains("image")) {
-            this.element = element
-        } else {
-            console.error("element type not suitable for toolbar")
-        }
-    }
-    constructToolbar = () => {
-        this.dragButton = document.createElement("button")
-        this.dragButton.innerText = "Enable Drag"
-
-
-        this.disableDragButton = document.createElement("button")
-        this.disableDragButton.innerText = "Disable Drag"
-
-
-        this.resizeButton = document.createElement("button")
-        this.resizeButton.innerText = "Resize Image"
-
-
-        this.disableResizeButton = document.createElement("button")
-        this.disableResizeButton.innerText = "Disable Resize"
-
-
-        this.fileInput = document.createElement("input")
-        this.fileInput.type = "file"
-        this.fileInput.innerText = "Input Image"
-        this.fileInput.style.cursor = "pointer"
-
-
-        this.img = document.createElement("img")
-        this.img.style.width = "25px"
-        this.img.style.height = "25px"
-        this.img.style.backgroundColor = "grey"
-        this.fileInputSubmit = document.createElement("button")
-        this.fileInputSubmit.innerText = "Submit Image"
-        this.div = document.createElement("div")
-        this.div.appendChild(this.fileInput)
-        this.div.appendChild(this.img)
-
-
-        this.toolbarDiv.appendChild(this.dragButton)
-        this.toolbarDiv.appendChild(this.disableDragButton)
-        this.toolbarDiv.appendChild(this.resizeButton)
-        this.toolbarDiv.appendChild(this.disableResizeButton)
-        this.toolbarDiv.appendChild(this.fileInputSubmit)
-        this.toolbarDiv.appendChild(this.div)
-
-
-    }
-
-
-
-
-
-}
-
- class ImageUtility extends Utility {
-    constructor(element) {
-        super(element)
-        this.toolbar = new ImageToolbar(element)
-
-        this.functions = new ImageFunctions(element, this.toolbar)
-    }
-
-
-
-
-
-    constructToolbar = () => {
-        this.toolbar.constructToolbar()
-        this.attachFileInputHandler(this.functions.handleFileInput)
-        this.attachFileInputSubmitHandler()
-        this.initEnableImageDrag()
-        this.initDisableImageDrag()
-        this.initEnableImageResize()
-        this.initDisableImageResize()
-
-    }
-
-
-
-
-    attachFileInputSubmitHandler = () => {
-        this.toolbar.fileInputSubmit.addEventListener("click", this.functions.handleFileInputSubmit)
-    }
-
-    attachFileInputHandler = (handler) => {
-        this.toolbar.fileInput.addEventListener("change", handler)
-    }
-
-    initEnableImageDrag = () => {
-        this.toolbar.dragButton.addEventListener("click", this.functions.enableDragMode)
-    }
-
-    initDisableImageDrag = () => {
-        this.toolbar.disableDragButton.addEventListener("click", this.functions.disableDragMode)
-    }
-
-    initEnableImageResize = () => {
-        this.toolbar.resizeButton.addEventListener("click", this.functions.enableImageResize)
-    }
-
-    initDisableImageResize = () => {
-        this.toolbar.disableResizeButton.addEventListener("click", this.functions.disableImageResize)
-    }
-
 }

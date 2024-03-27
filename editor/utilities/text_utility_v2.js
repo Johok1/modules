@@ -7,58 +7,65 @@ export default class TextUtility extends Utility {
         super(element)
         this.toolbar = new TextToolbar(element)
 
-        this.functions = new TextFunctions(element)
+        this.functions = new TextFunctions(element, this.deconstructToolbar, this.constructToolbar)
     }
 
     selectElement = () => {
-        this.element.style.border = "solid 1px red"
+        this.element.querySelector(".textParagraph").style.border = "solid 1px red"
         this.functions.disableDragMode()
-
+ 
     }
 
     deselectElement = () => {
-        this.element.style.border = "none"
+        this.element.querySelector(".textParagraph").style.border = "none"
         this.functions.handleDisableEditText()
         this.enableDrag()
+        this.deconstructToolbar()
+     
+    }
+
+    deconstructToolbar = () => {
+        this.toolbar.deconstructToolbar()
     }
 
     constructToolbar = () => {
         this.toolbar.constructToolbar()
         this.initBoxResizeBtn()
-        this.initBoxDisableResizeBtn()
         this.initEditTextBtn()
-        this.initDisableEditTextBtn()
-        this.initEnableDragBtn()
-        this.initDisableDragBtn()
+        this.initCancelSelectionBtn()
     }
+
+    
 
     enableDrag = () => {
         this.functions.enableDragMode()
     }
 
+    initCancelSelectionBtn = () => {
+        this.toolbar.cancelSelectionBtn.addEventListener("click", this.deselectElement)
+    }
 
     initBoxResizeBtn = () => {
-        this.toolbar.resizeButton.addEventListener("click", this.functions.boxResize)
+        let onBoxResize = this.functions.onBoxResize
+        let element = this.element
+        this.toolbar.resizeButton.addEventListener("mousedown", (event) => {
+            // Initiate resizing - attach mousemove to document
+            element.addEventListener("mousemove", onBoxResize);
+            event.preventDefault(); // Prevent default drag behavior
+        });
+
+        document.addEventListener("mouseup", () => {
+            // End resizing - remove mousemove from document
+            element.removeEventListener("mousemove", onBoxResize);
+        });
+
     }
 
-    initBoxDisableResizeBtn = () => {
-        this.toolbar.disableResizeButton.addEventListener("click", this.functions.boxDisableResize)
-    }
+   
 
     initEditTextBtn = () => {
         this.toolbar.editTextBtn.addEventListener("click", this.functions.handleEditText)
     }
 
-    initDisableEditTextBtn = () => {
-        this.toolbar.disabelEditText.addEventListener("click", this.functions.handleDisableEditText)
-    }
-
-    initEnableDragBtn = () => {
-        this.toolbar.dragButton.addEventListener("click", this.functions.enableDragMode)
-    }
-
-    initDisableDragBtn = () => {
-        this.toolbar.disableDragButton.addEventListener("click", this.functions.disableDragMode)
-    }
 
 }

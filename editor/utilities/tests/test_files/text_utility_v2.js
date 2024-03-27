@@ -28,59 +28,69 @@ class TextUtility extends Utility {
         super(element)
         this.toolbar = new TextToolbar(element)
 
-        this.functions = new TextFunctions(element)
+        this.functions = new TextFunctions(element, this.deconstructToolbar, this.constructToolbar)
     }
 
     selectElement = () => {
-        this.element.style.border = "solid 1px red"
+        this.element.querySelector(".textParagraph").style.border = "solid 1px red"
         this.functions.disableDragMode()
-
+ 
     }
 
     deselectElement = () => {
-        this.element.style.border = "none"
+        this.element.querySelector(".textParagraph").style.border = "none"
         this.functions.handleDisableEditText()
         this.enableDrag()
+        this.deconstructToolbar()
+     
+    }
+
+    deconstructToolbar = () => {
+        this.toolbar.deconstructToolbar()
     }
 
     constructToolbar = () => {
         this.toolbar.constructToolbar()
         this.initBoxResizeBtn()
-        this.initBoxDisableResizeBtn()
-        this.initEditTextBtn()
-        this.initDisableEditTextBtn()
-        this.initEnableDragBtn()
-        this.initDisableDragBtn()
+        this.initEditTextBtn() 
     }
+
+    
 
     enableDrag = () => {
         this.functions.enableDragMode()
     }
 
+    initCancelSelectionBtn = () => {
+        this.toolbar.cancelSelectionBtn.addEventListener("click", this.deselectElement)
+    }
 
     initBoxResizeBtn = () => {
-        this.toolbar.resizeButton.addEventListener("click", this.functions.boxResize)
+        let onBoxResize = this.functions.onBoxResize
+        let element = this.element
+        this.toolbar.resizeButton.addEventListener("mousedown", (event) => {
+            // Initiate resizing - attach mousemove to document
+            element.addEventListener("mousemove", onBoxResize);
+            event.preventDefault(); // Prevent default drag behavior
+        });
+
+        document.addEventListener("mouseup", () => {
+            // End resizing - remove mousemove from document
+            element.removeEventListener("mousemove", onBoxResize);
+        });
+
     }
 
-    initBoxDisableResizeBtn = () => {
-        this.toolbar.disableResizeButton.addEventListener("click", this.functions.boxDisableResize)
-    }
+   
 
     initEditTextBtn = () => {
         this.toolbar.editTextBtn.addEventListener("click", this.functions.handleEditText)
     }
 
     initDisableEditTextBtn = () => {
-        this.toolbar.disabelEditText.addEventListener("click", this.functions.handleDisableEditText)
+        this.toolbar.disableEditText.addEventListener("click", this.functions.handleDisableEditText)
     }
 
-    initEnableDragBtn = () => {
-        this.toolbar.dragButton.addEventListener("click", this.functions.enableDragMode)
-    }
-
-    initDisableDragBtn = () => {
-        this.toolbar.disableDragButton.addEventListener("click", this.functions.disableDragMode)
-    }
 
 }
 
@@ -107,33 +117,48 @@ class TextToolbar {
 
     constructToolbar = () => {
 
-        this.dragButton = document.createElement("button")
-        this.dragButton.innerText = "Enable Drag"
-
-        this.disableDragButton = document.createElement("button")
-        this.disableDragButton.innerText = "Disable Drag"
+      
 
         this.resizeButton = document.createElement("button")
-        this.resizeButton.innerText = "Enable Resize"
+        this.resizeButton.innerText = "Resize"
+        this.resizeButton.classList.add("text-popup")
 
-        this.disableResizeButton = document.createElement("button")
-        this.disableResizeButton.innerText = "Disable Resize"
+        this.resizeButton.style.position = "absolute"
+        this.resizeButton.style.bottom = "0px"
+        this.resizeButton.style.right = "0px"
 
+     
         this.editTextBtn = document.createElement("button")
-        this.editTextBtn.innerText = "Edit Text"
+        this.editTextBtn.innerText = "Edit"
+        this.editTextBtn.classList.add("text-popup")
+        this.editTextBtn.style.position = "absolute"
+        this.editTextBtn.style.top = "0px"
+        this.editTextBtn.style.left = "0px"
 
-        this.disabelEditText = document.createElement("button")
-        this.disabelEditText.innerText = "Disable Edit Text"
-
-        this.toolbarDiv.appendChild(this.editTextBtn)
-        this.toolbarDiv.appendChild(this.disabelEditText)
-        this.toolbarDiv.appendChild(this.dragButton)
-        this.toolbarDiv.appendChild(this.disableDragButton)
-        this.toolbarDiv.appendChild(this.resizeButton)
-        this.toolbarDiv.appendChild(this.disableResizeButton)
+        this.cancelSelectionBtn = document.createElement("button")
+        this.cancelSelectionBtn.innerText = "Cancel"
+        this.cancelSelectionBtn.classList.add("text-popup")
+        this.cancelSelectionBtn.style.position = "absolute"
+        this.cancelSelectionBtn.style.bottom = "0px"
+        this.cancelSelectionBtn.style.left = "0px"
 
 
+        this.element.appendChild(this.cancelSelectionBtn)
+        this.element.appendChild(this.editTextBtn)
+        this.element.appendChild(this.resizeButton)
+      
+        
+      
 
+
+
+    }
+
+   
+
+
+    deconstructToolbar = () => {
+        $('.text-popup').remove()
     }
 
 
@@ -149,18 +174,23 @@ class TextToolbar {
 
 class TextFunctions {
 
-    constructor(element) {
+    constructor(element,func,func2) {
         this.element = element
+        this.deconstructToolbar = func
+        this.constructToolbar = func2
     }
 
     handleEditText = () => {
         console.log(this.element)
         console.log(this.element.firstChild)
+        this.deconstructToolbar()
         this.element.classList.add("summernote")
         let top = this.element.style.top
         let left = this.element.style.left
         let width = this.element.style.width
         let height = this.element.style.height
+        let handleDisableEditText = this.handleDisableEditText
+        
         $(document).ready(function () {
             $('.summernote').summernote({
                 focus: true, airMode: true, popover: {
@@ -182,6 +212,15 @@ class TextFunctions {
                 width: width,
                 height: height
             })
+            let disableEditBtn = $('<button class="disable-edit-button">Disable Edit</button>');
+
+            // Add an event listener to the button
+           
+
+            $('.note-editor').append(disableEditBtn)
+
+            $('.disable-edit-button').on("click", handleDisableEditText);
+            
         });
     }
 
@@ -193,6 +232,8 @@ class TextFunctions {
         $('.summernote').summernote('destroy');
 
         $('.summernote').removeClass('summernote')
+
+        this.constructToolbar()
     }
 
 
@@ -220,33 +261,23 @@ class TextFunctions {
     }
 
 
+     boxResize = (resizeButton) => {
+        // Initiate resizing - attach mousemove to document
+        resizeButton.onmousedown = (event) => {
+            document.addEventListener("mousemove", this.onBoxResize);
+            event.preventDefault(); // Prevent default drag behavior
+        };
 
-    boxResize = () => {
-        this.initResizeBoxElement(this.element)
+        // End resizing - remove mousemove from document
+        document.onmouseup = () => {
+            document.removeEventListener("mousemove", this.onBoxResize);
+        };
     }
 
-    boxDisableResize = () => {
-        this.element.onmousedown = undefined
-    }
-
-    initResizeBoxElement = (elmnt) => {
-
-
-
-        // otherwise, move the DIV from anywhere inside the DIV:
-        elmnt.onmousedown = this.resizeBoxElement
-        elmnt.onmouseleave = this.stopBoxResize
-        elmnt.onmouseup = this.stopBoxResize
-
-    }
-
-    stopBoxResize = (event) => {
-        event.currentTarget.removeEventListener("mousemove", this.onBoxResize)
-    }
-
-    resizeBoxElement = (event) => {
-
-        event.currentTarget.addEventListener("mousemove", this.onBoxResize)
+    boxDisableResize = (resizeButton) => {
+        // Just in case you want to explicitly remove the ability to resize
+        resizeButton.onmousedown = undefined;
+        document.onmouseup = undefined;
     }
 
     onBoxResize({ movementX, movementY }) {
@@ -10566,4 +10597,3 @@ external_root_jQuery_commonjs2_jquery_commonjs_jquery_amd_jquery_default.a.summe
 
 /******/ });
 });
-//# sourceMappingURL=summernote.js.map

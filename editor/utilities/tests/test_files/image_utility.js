@@ -28,30 +28,35 @@ class ImageUtility extends Utility {
     constructor(element) {
         super(element)
         this.toolbar = new ImageToolbar(element)
-
-        this.functions = new ImageFunctions(element, this.toolbar)
+     
+        this.functions = new ImageFunctions(element, element.querySelector('img'), this.toolbar)
     }
 
 
 
     selectElement = () => {
         this.functions.disableDragMode()
+        this.element.style.border = "solid 1px red"
 
     }
 
     deselectElement = () => {
         this.enableDrag()
+        this.element.style.border = "none"
     }
 
     constructToolbar = () => {
         this.toolbar.constructToolbar()
         this.attachFileInputHandler(this.functions.handleFileInput)
         this.attachFileInputSubmitHandler()
-        this.initEnableImageDrag()
-        this.initDisableImageDrag()
+        
         this.initEnableImageResize()
         this.initDisableImageResize()
 
+    }
+
+    deconstructToolbar = () => {
+        this.toolbar.deconstructToolbar()
     }
 
     enableDrag = () => {
@@ -67,14 +72,7 @@ class ImageUtility extends Utility {
         this.toolbar.fileInput.addEventListener("change", handler)
     }
 
-    initEnableImageDrag = () => {
-        this.toolbar.dragButton.addEventListener("click", this.functions.enableDragMode)
-    }
-
-    initDisableImageDrag = () => {
-        this.toolbar.disableDragButton.addEventListener("click", this.functions.disableDragMode)
-    }
-
+  
     initEnableImageResize = () => {
         this.toolbar.resizeButton.addEventListener("click", this.functions.enableImageResize)
     }
@@ -100,58 +98,61 @@ class ImageToolbar {
         }
     }
     constructToolbar = () => {
-        this.dragButton = document.createElement("button")
-        this.dragButton.innerText = "Enable Drag"
-
-
-        this.disableDragButton = document.createElement("button")
-        this.disableDragButton.innerText = "Disable Drag"
+      
 
 
         this.resizeButton = document.createElement("button")
         this.resizeButton.innerText = "Resize Image"
-
+        this.resizeButton.classList.add("image-popup")
 
         this.disableResizeButton = document.createElement("button")
         this.disableResizeButton.innerText = "Disable Resize"
-
+        this.disableResizeButton.classList.add("image-popup")
 
         this.fileInput = document.createElement("input")
         this.fileInput.type = "file"
         this.fileInput.innerText = "Input Image"
         this.fileInput.style.cursor = "pointer"
-
+        this.fileInput.classList.add("image-popup")
 
         this.img = document.createElement("img")
         this.img.style.width = "25px"
         this.img.style.height = "25px"
         this.img.style.backgroundColor = "grey"
+        this.img.classList.add("image-popup")
+
         this.fileInputSubmit = document.createElement("button")
         this.fileInputSubmit.innerText = "Submit Image"
+        this.fileInputSubmit.classList.add("image-popup")
+
         this.div = document.createElement("div")
+        this.div.classList.add("image-popup")
+        
         this.div.appendChild(this.fileInput)
         this.div.appendChild(this.img)
 
 
-        this.toolbarDiv.appendChild(this.dragButton)
-        this.toolbarDiv.appendChild(this.disableDragButton)
-        this.toolbarDiv.appendChild(this.resizeButton)
-        this.toolbarDiv.appendChild(this.disableResizeButton)
-        this.toolbarDiv.appendChild(this.fileInputSubmit)
-        this.toolbarDiv.appendChild(this.div)
+      
+        this.element.appendChild(this.resizeButton)
+        this.element.appendChild(this.disableResizeButton)
+        this.element.appendChild(this.fileInputSubmit)
+        this.element.appendChild(this.div)
 
 
     }
 
-
+    deconstructToolbar = () => {
+        $('.image-popup').remove()
+    }
 
 
 
 }
 class ImageFunctions {
-    constructor(element, toolbar) {
+    constructor(element,img, toolbar) {
         this.element = element
         this.toolbar = toolbar
+        this.img = img 
     }
 
     enableFileDrop = () => {
@@ -159,8 +160,8 @@ class ImageFunctions {
     }
 
     handleFileInputSubmit = () => {
-        this.element.src = URL.createObjectURL(this.toolbar.fileInput.files.item(0))
-        this.element.style.backgroundColor = "transparent"
+        this.img.src = URL.createObjectURL(this.toolbar.fileInput.files.item(0))
+        this.img.style.backgroundColor = "transparent"
     }
 
 
@@ -231,11 +232,13 @@ class ImageFunctions {
     }
 
     enableImageResize = () => {
+        this.dragImageElement(this.img)
         this.dragImageElement(this.element)
     }
 
     disableImageResize = () => {
-        this.element.onmousedown = undefined
+        this.img.onmousedown = undefined
+        this.element.onmousedown = undefined 
     }
 
     dragImageElement = (elmnt) => {

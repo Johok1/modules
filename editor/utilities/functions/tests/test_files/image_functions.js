@@ -1,7 +1,8 @@
 class ImageFunctions {
-    constructor(element, toolbar) {
+    constructor(element,img, toolbar) {
         this.element = element
         this.toolbar = toolbar
+        this.img = img 
     }
 
     enableFileDrop = () => {
@@ -9,8 +10,8 @@ class ImageFunctions {
     }
 
     handleFileInputSubmit = () => {
-        this.element.src = URL.createObjectURL(this.toolbar.fileInput.files.item(0))
-        this.element.style.backgroundColor = "transparent"
+        this.img.src = URL.createObjectURL(this.toolbar.fileInput.files.item(0))
+        this.img.style.backgroundColor = "transparent"
     }
 
 
@@ -81,11 +82,13 @@ class ImageFunctions {
     }
 
     enableImageResize = () => {
+        this.dragImageElement(this.img)
         this.dragImageElement(this.element)
     }
 
     disableImageResize = () => {
-        this.element.onmousedown = undefined
+        this.img.onmousedown = undefined
+        this.element.onmousedown = undefined 
     }
 
     dragImageElement = (elmnt) => {

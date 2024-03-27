@@ -21,33 +21,48 @@ export default class TextToolbar {
 
     constructToolbar = () => {
 
-        this.dragButton = document.createElement("button")
-        this.dragButton.innerText = "Enable Drag"
-
-        this.disableDragButton = document.createElement("button")
-        this.disableDragButton.innerText = "Disable Drag"
+      
 
         this.resizeButton = document.createElement("button")
-        this.resizeButton.innerText = "Enable Resize"
+        this.resizeButton.innerText = "Resize"
+        this.resizeButton.classList.add("text-popup")
 
-        this.disableResizeButton = document.createElement("button")
-        this.disableResizeButton.innerText = "Disable Resize"
+        this.resizeButton.style.position = "absolute"
+        this.resizeButton.style.bottom = "0px"
+        this.resizeButton.style.right = "0px"
 
+     
         this.editTextBtn = document.createElement("button")
-        this.editTextBtn.innerText = "Edit Text"
+        this.editTextBtn.innerText = "Edit"
+        this.editTextBtn.classList.add("text-popup")
+        this.editTextBtn.style.position = "absolute"
+        this.editTextBtn.style.top = "0px"
+        this.editTextBtn.style.left = "0px"
 
-        this.disabelEditText = document.createElement("button")
-        this.disabelEditText.innerText = "Disable Edit Text"
-
-        this.toolbarDiv.appendChild(this.editTextBtn)
-        this.toolbarDiv.appendChild(this.disabelEditText)
-        this.toolbarDiv.appendChild(this.dragButton)
-        this.toolbarDiv.appendChild(this.disableDragButton)
-        this.toolbarDiv.appendChild(this.resizeButton)
-        this.toolbarDiv.appendChild(this.disableResizeButton)
+        this.cancelSelectionBtn = document.createElement("button")
+        this.cancelSelectionBtn.innerText = "Cancel"
+        this.cancelSelectionBtn.classList.add("text-popup")
+        this.cancelSelectionBtn.style.position = "absolute"
+        this.cancelSelectionBtn.style.bottom = "0px"
+        this.cancelSelectionBtn.style.left = "0px"
 
 
+        this.element.appendChild(this.cancelSelectionBtn)
+        this.element.appendChild(this.editTextBtn)
+        this.element.appendChild(this.resizeButton)
+      
+        
+      
 
+
+
+    }
+
+   
+
+
+    deconstructToolbar = () => {
+        $('.text-popup').remove()
     }
 
 

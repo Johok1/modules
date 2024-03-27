@@ -7,30 +7,35 @@ export default class ImageUtility extends Utility {
     constructor(element) {
         super(element)
         this.toolbar = new ImageToolbar(element)
-
-        this.functions = new ImageFunctions(element, this.toolbar)
+     
+        this.functions = new ImageFunctions(element, element.querySelector('img'), this.toolbar)
     }
 
 
 
     selectElement = () => {
         this.functions.disableDragMode()
+        this.element.style.border = "solid 1px red"
 
     }
 
     deselectElement = () => {
         this.enableDrag()
+        this.element.style.border = "none"
     }
 
     constructToolbar = () => {
         this.toolbar.constructToolbar()
         this.attachFileInputHandler(this.functions.handleFileInput)
         this.attachFileInputSubmitHandler()
-        this.initEnableImageDrag()
-        this.initDisableImageDrag()
+        
         this.initEnableImageResize()
         this.initDisableImageResize()
 
+    }
+
+    deconstructToolbar = () => {
+        this.toolbar.deconstructToolbar()
     }
 
     enableDrag = () => {
@@ -46,14 +51,7 @@ export default class ImageUtility extends Utility {
         this.toolbar.fileInput.addEventListener("change", handler)
     }
 
-    initEnableImageDrag = () => {
-        this.toolbar.dragButton.addEventListener("click", this.functions.enableDragMode)
-    }
-
-    initDisableImageDrag = () => {
-        this.toolbar.disableDragButton.addEventListener("click", this.functions.disableDragMode)
-    }
-
+  
     initEnableImageResize = () => {
         this.toolbar.resizeButton.addEventListener("click", this.functions.enableImageResize)
     }

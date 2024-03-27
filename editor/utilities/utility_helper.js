@@ -9,7 +9,7 @@ export default class UtilityHelper {
     }
 
     toggleSelect = () => {
-        this.select = !this.select;
+        this.select = true
     }
 
     // Combining the enable/disable functions for better DRY compliance
@@ -17,7 +17,7 @@ export default class UtilityHelper {
         document.querySelectorAll(selector).forEach(element => {
             const utility = this.utilityFactory.getUtility(element);
             if (enable) {
-               
+
             } else {
                 utility.deselectElement();
             }
@@ -41,7 +41,7 @@ export default class UtilityHelper {
 
     disableDragElement = (element) => {
         element.classList.remove("drag")
-       
+
     }
 
     registerAllHandlers = () => {
@@ -56,15 +56,29 @@ export default class UtilityHelper {
     }
 
     registerImageHandlers = (imgElement) => {
+        if (imgElement.getAttribute('data-dblclick-attached') !== 'true') {
         const imageUtility = this.utilityFactory.getUtility(imgElement);
-        imgElement.addEventListener("click", () => this.selectHandler(imageUtility));
+
+        // Attach the dblclick event listener
+        imgElement.addEventListener("dblclick", () => this.selectHandler(imageUtility));
+
+        // Set a custom attribute to indicate that the event listener has been attached
+        imgElement.setAttribute('data-dblclick-attached', 'true');
+    }
     }
 
     registerTextHandlers = (textElement) => {
-        const textUtility = this.utilityFactory.getUtility(textElement);
-        console.log(textElement); // Consider whether this log is needed; if for debugging, it's okay.
-        this.registerCompHandlers(textUtility, textElement.querySelectorAll(".style"));
-        textElement.addEventListener("click", () => this.selectHandler(textUtility));
+      
+           
+        // Check if the dblclick handler has not already been attached
+        if (!textElement.hasAttribute('data-dblclick-attached')) {
+            const textUtility = this.utilityFactory.getUtility(textElement);
+            this.registerCompHandlers(textUtility, textElement.querySelectorAll(".style"));
+            textElement.addEventListener("dblclick", () => this.selectHandler(textUtility));
+            textElement.setAttribute('data-dblclick-attached', 'true'); // Mark it as attached
+        }
+        
+
     }
 
     registerCompHandlers = (textUtility, compList) => {
@@ -72,21 +86,43 @@ export default class UtilityHelper {
     }
 
     selectHandler = (utilityElement) => {
-        if (!this.select) return; // Early return to reduce nesting
+        console.log(this.select)
+        console.log(this.selectedEl)
 
-        if (this.selectedEl && this.selectedEl !== utilityElement) {
+
+
+        if (this.selectedEl && !(this.selectedEl === utilityElement)) {
+            console.log("select case 1")
             this.selectedEl.deselectElement();
             this.selectedEl.enableDrag()
             this.toolbarDiv.innerHTML = ""; // Clear once when changing
+            this.selectedEl.deconstructToolbar()
+            utilityElement.constructToolbar()
+            utilityElement.selectElement()
+            this.selectedEl = utilityElement
+            this.selectedEl.functions.disableDragMode()
+            this.select = true
         }
 
-        if (!this.selectedEl || this.selectedEl !== utilityElement) {
+        else if (!this.selectedEl && !(this.selectedEl === utilityElement)) {
             console.log(utilityElement.element); // Assuming necessary for debugging
-            
+            console.log("select case 2")
             utilityElement.constructToolbar();
             utilityElement.selectElement();
             this.selectedEl = utilityElement;
             this.selectedEl.functions.disableDragMode()
+            this.select = true
+        }
+
+        else if (this.select && (this.selectedEl === utilityElement)) {
+            this.selectedEl.deselectElement()
+            this.selectedEl.deconstructToolbar()
+            this.selectedEl.enableDrag()
+            this.selectedEl = undefined
+            this.toolbarDiv.innerHTML = ""
+            this.selectedEl = undefined
+            this.select = false
+
         }
     }
 }

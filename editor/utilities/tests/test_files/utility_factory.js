@@ -15,7 +15,7 @@ class UtilityFactory {
     constructTextUtility = () => {
         const page = document.getElementById("page");
         const font = this.createElement('font', { innerText: 'New Text' }, { color: 'black' });
-        const label = this.createElement('p', { draggable: false, className: 'comp' }, {});
+        const label = this.createElement('p', { draggable: false, className: 'textParagraph' }, {});
         label.appendChild(font);
 
         const labelDivStyles = {
@@ -24,6 +24,7 @@ class UtilityFactory {
         };
         const labelDiv = this.createElement('div', { className: 'text drag' }, labelDivStyles);
         labelDiv.appendChild(label);
+        labelDiv.style.padding = "35px"
         page.appendChild(labelDiv);
         let utility = this.getUtility(labelDiv)
         utility.enableDrag()
@@ -32,10 +33,19 @@ class UtilityFactory {
     // Method to construct the image utility
     constructImageUtility = () => {
         const page = document.getElementById("page");
-        const imgStyles = { backgroundColor: 'grey', zIndex: '1' };
-        const img = this.createElement('img', { className: 'image drag', draggable: false }, imgStyles);
-        page.appendChild(img);
-        let utility = this.getUtility(img)
+        const imgStyles = {padding: "30px" };
+        let img = this.createElement('img');
+        img.style.backgroundColor = "grey"
+        img.style.width = "25px"
+        img.style.height = "25px"
+        img.draggable = false
+        img.style.userSelect = "none"
+        let div = this.createElement('div', { className: 'image drag', draggable: false }, imgStyles)
+        div.style.width = "250px"
+        div.style.height = "250px"
+        div.appendChild(img)
+        page.appendChild(div);
+        let utility = this.getUtility(div)
         utility.enableDrag()
     }
 
@@ -82,30 +92,35 @@ class ImageUtility extends Utility {
     constructor(element) {
         super(element)
         this.toolbar = new ImageToolbar(element)
-
-        this.functions = new ImageFunctions(element, this.toolbar)
+     
+        this.functions = new ImageFunctions(element, element.querySelector('img'), this.toolbar)
     }
 
 
 
     selectElement = () => {
         this.functions.disableDragMode()
+        this.element.style.border = "solid 1px red"
 
     }
 
     deselectElement = () => {
         this.enableDrag()
+        this.element.style.border = "none"
     }
 
     constructToolbar = () => {
         this.toolbar.constructToolbar()
         this.attachFileInputHandler(this.functions.handleFileInput)
         this.attachFileInputSubmitHandler()
-        this.initEnableImageDrag()
-        this.initDisableImageDrag()
+        
         this.initEnableImageResize()
         this.initDisableImageResize()
 
+    }
+
+    deconstructToolbar = () => {
+        this.toolbar.deconstructToolbar()
     }
 
     enableDrag = () => {
@@ -121,14 +136,7 @@ class ImageUtility extends Utility {
         this.toolbar.fileInput.addEventListener("change", handler)
     }
 
-    initEnableImageDrag = () => {
-        this.toolbar.dragButton.addEventListener("click", this.functions.enableDragMode)
-    }
-
-    initDisableImageDrag = () => {
-        this.toolbar.disableDragButton.addEventListener("click", this.functions.disableDragMode)
-    }
-
+  
     initEnableImageResize = () => {
         this.toolbar.resizeButton.addEventListener("click", this.functions.enableImageResize)
     }
@@ -148,59 +156,69 @@ class TextUtility extends Utility {
         super(element)
         this.toolbar = new TextToolbar(element)
 
-        this.functions = new TextFunctions(element)
+        this.functions = new TextFunctions(element, this.deconstructToolbar, this.constructToolbar)
     }
 
     selectElement = () => {
-        this.element.style.border = "solid 1px red"
+        this.element.querySelector(".textParagraph").style.border = "solid 1px red"
         this.functions.disableDragMode()
-
+ 
     }
 
     deselectElement = () => {
-        this.element.style.border = "none"
+        this.element.querySelector(".textParagraph").style.border = "none"
         this.functions.handleDisableEditText()
         this.enableDrag()
+        this.deconstructToolbar()
+     
+    }
+
+    deconstructToolbar = () => {
+        this.toolbar.deconstructToolbar()
     }
 
     constructToolbar = () => {
         this.toolbar.constructToolbar()
         this.initBoxResizeBtn()
-        this.initBoxDisableResizeBtn()
-        this.initEditTextBtn()
-        this.initDisableEditTextBtn()
-        this.initEnableDragBtn()
-        this.initDisableDragBtn()
+        this.initEditTextBtn() 
     }
+
+    
 
     enableDrag = () => {
         this.functions.enableDragMode()
     }
 
+    initCancelSelectionBtn = () => {
+        this.toolbar.cancelSelectionBtn.addEventListener("click", this.deselectElement)
+    }
 
     initBoxResizeBtn = () => {
-        this.toolbar.resizeButton.addEventListener("click", this.functions.boxResize)
+        let onBoxResize = this.functions.onBoxResize
+        let element = this.element
+        this.toolbar.resizeButton.addEventListener("mousedown", (event) => {
+            // Initiate resizing - attach mousemove to document
+            element.addEventListener("mousemove", onBoxResize);
+            event.preventDefault(); // Prevent default drag behavior
+        });
+
+        document.addEventListener("mouseup", () => {
+            // End resizing - remove mousemove from document
+            element.removeEventListener("mousemove", onBoxResize);
+        });
+
     }
 
-    initBoxDisableResizeBtn = () => {
-        this.toolbar.disableResizeButton.addEventListener("click", this.functions.boxDisableResize)
-    }
+   
 
     initEditTextBtn = () => {
         this.toolbar.editTextBtn.addEventListener("click", this.functions.handleEditText)
     }
 
     initDisableEditTextBtn = () => {
-        this.toolbar.disabelEditText.addEventListener("click", this.functions.handleDisableEditText)
+        this.toolbar.disableEditText.addEventListener("click", this.functions.handleDisableEditText)
     }
 
-    initEnableDragBtn = () => {
-        this.toolbar.dragButton.addEventListener("click", this.functions.enableDragMode)
-    }
-
-    initDisableDragBtn = () => {
-        this.toolbar.disableDragButton.addEventListener("click", this.functions.disableDragMode)
-    }
 
 }
 
@@ -219,50 +237,52 @@ class ImageToolbar {
         }
     }
     constructToolbar = () => {
-        this.dragButton = document.createElement("button")
-        this.dragButton.innerText = "Enable Drag"
-
-
-        this.disableDragButton = document.createElement("button")
-        this.disableDragButton.innerText = "Disable Drag"
+      
 
 
         this.resizeButton = document.createElement("button")
         this.resizeButton.innerText = "Resize Image"
-
+        this.resizeButton.classList.add("image-popup")
 
         this.disableResizeButton = document.createElement("button")
         this.disableResizeButton.innerText = "Disable Resize"
-
+        this.disableResizeButton.classList.add("image-popup")
 
         this.fileInput = document.createElement("input")
         this.fileInput.type = "file"
         this.fileInput.innerText = "Input Image"
         this.fileInput.style.cursor = "pointer"
-
+        this.fileInput.classList.add("image-popup")
 
         this.img = document.createElement("img")
         this.img.style.width = "25px"
         this.img.style.height = "25px"
         this.img.style.backgroundColor = "grey"
+        this.img.classList.add("image-popup")
+
         this.fileInputSubmit = document.createElement("button")
         this.fileInputSubmit.innerText = "Submit Image"
+        this.fileInputSubmit.classList.add("image-popup")
+
         this.div = document.createElement("div")
+        this.div.classList.add("image-popup")
+        
         this.div.appendChild(this.fileInput)
         this.div.appendChild(this.img)
 
 
-        this.toolbarDiv.appendChild(this.dragButton)
-        this.toolbarDiv.appendChild(this.disableDragButton)
-        this.toolbarDiv.appendChild(this.resizeButton)
-        this.toolbarDiv.appendChild(this.disableResizeButton)
-        this.toolbarDiv.appendChild(this.fileInputSubmit)
-        this.toolbarDiv.appendChild(this.div)
+      
+        this.element.appendChild(this.resizeButton)
+        this.element.appendChild(this.disableResizeButton)
+        this.element.appendChild(this.fileInputSubmit)
+        this.element.appendChild(this.div)
 
 
     }
 
-
+    deconstructToolbar = () => {
+        $('.image-popup').remove()
+    }
 
 
 
@@ -290,33 +310,48 @@ class TextToolbar {
 
     constructToolbar = () => {
 
-        this.dragButton = document.createElement("button")
-        this.dragButton.innerText = "Enable Drag"
-
-        this.disableDragButton = document.createElement("button")
-        this.disableDragButton.innerText = "Disable Drag"
+      
 
         this.resizeButton = document.createElement("button")
-        this.resizeButton.innerText = "Enable Resize"
+        this.resizeButton.innerText = "Resize"
+        this.resizeButton.classList.add("text-popup")
 
-        this.disableResizeButton = document.createElement("button")
-        this.disableResizeButton.innerText = "Disable Resize"
+        this.resizeButton.style.position = "absolute"
+        this.resizeButton.style.bottom = "0px"
+        this.resizeButton.style.right = "0px"
 
+     
         this.editTextBtn = document.createElement("button")
-        this.editTextBtn.innerText = "Edit Text"
+        this.editTextBtn.innerText = "Edit"
+        this.editTextBtn.classList.add("text-popup")
+        this.editTextBtn.style.position = "absolute"
+        this.editTextBtn.style.top = "0px"
+        this.editTextBtn.style.left = "0px"
 
-        this.disabelEditText = document.createElement("button")
-        this.disabelEditText.innerText = "Disable Edit Text"
-
-        this.toolbarDiv.appendChild(this.editTextBtn)
-        this.toolbarDiv.appendChild(this.disabelEditText)
-        this.toolbarDiv.appendChild(this.dragButton)
-        this.toolbarDiv.appendChild(this.disableDragButton)
-        this.toolbarDiv.appendChild(this.resizeButton)
-        this.toolbarDiv.appendChild(this.disableResizeButton)
+        this.cancelSelectionBtn = document.createElement("button")
+        this.cancelSelectionBtn.innerText = "Cancel"
+        this.cancelSelectionBtn.classList.add("text-popup")
+        this.cancelSelectionBtn.style.position = "absolute"
+        this.cancelSelectionBtn.style.bottom = "0px"
+        this.cancelSelectionBtn.style.left = "0px"
 
 
+        this.element.appendChild(this.cancelSelectionBtn)
+        this.element.appendChild(this.editTextBtn)
+        this.element.appendChild(this.resizeButton)
+      
+        
+      
 
+
+
+    }
+
+   
+
+
+    deconstructToolbar = () => {
+        $('.text-popup').remove()
     }
 
 
@@ -332,18 +367,23 @@ class TextToolbar {
 
 class TextFunctions {
 
-    constructor(element) {
+    constructor(element,func,func2) {
         this.element = element
+        this.deconstructToolbar = func
+        this.constructToolbar = func2
     }
 
     handleEditText = () => {
         console.log(this.element)
         console.log(this.element.firstChild)
+        this.deconstructToolbar()
         this.element.classList.add("summernote")
         let top = this.element.style.top
         let left = this.element.style.left
         let width = this.element.style.width
         let height = this.element.style.height
+        let handleDisableEditText = this.handleDisableEditText
+        
         $(document).ready(function () {
             $('.summernote').summernote({
                 focus: true, airMode: true, popover: {
@@ -365,6 +405,15 @@ class TextFunctions {
                 width: width,
                 height: height
             })
+            let disableEditBtn = $('<button class="disable-edit-button">Disable Edit</button>');
+
+            // Add an event listener to the button
+           
+
+            $('.note-editor').append(disableEditBtn)
+
+            $('.disable-edit-button').on("click", handleDisableEditText);
+            
         });
     }
 
@@ -376,6 +425,8 @@ class TextFunctions {
         $('.summernote').summernote('destroy');
 
         $('.summernote').removeClass('summernote')
+
+        this.constructToolbar()
     }
 
 
@@ -403,33 +454,23 @@ class TextFunctions {
     }
 
 
+     boxResize = (resizeButton) => {
+        // Initiate resizing - attach mousemove to document
+        resizeButton.onmousedown = (event) => {
+            document.addEventListener("mousemove", this.onBoxResize);
+            event.preventDefault(); // Prevent default drag behavior
+        };
 
-    boxResize = () => {
-        this.initResizeBoxElement(this.element)
+        // End resizing - remove mousemove from document
+        document.onmouseup = () => {
+            document.removeEventListener("mousemove", this.onBoxResize);
+        };
     }
 
-    boxDisableResize = () => {
-        this.element.onmousedown = undefined
-    }
-
-    initResizeBoxElement = (elmnt) => {
-
-
-
-        // otherwise, move the DIV from anywhere inside the DIV:
-        elmnt.onmousedown = this.resizeBoxElement
-        elmnt.onmouseleave = this.stopBoxResize
-        elmnt.onmouseup = this.stopBoxResize
-
-    }
-
-    stopBoxResize = (event) => {
-        event.currentTarget.removeEventListener("mousemove", this.onBoxResize)
-    }
-
-    resizeBoxElement = (event) => {
-
-        event.currentTarget.addEventListener("mousemove", this.onBoxResize)
+    boxDisableResize = (resizeButton) => {
+        // Just in case you want to explicitly remove the ability to resize
+        resizeButton.onmousedown = undefined;
+        document.onmouseup = undefined;
     }
 
     onBoxResize({ movementX, movementY }) {
@@ -523,9 +564,10 @@ class TextFunctions {
     }
 }
 class ImageFunctions {
-    constructor(element, toolbar) {
+    constructor(element,img, toolbar) {
         this.element = element
         this.toolbar = toolbar
+        this.img = img 
     }
 
     enableFileDrop = () => {
@@ -533,8 +575,8 @@ class ImageFunctions {
     }
 
     handleFileInputSubmit = () => {
-        this.element.src = URL.createObjectURL(this.toolbar.fileInput.files.item(0))
-        this.element.style.backgroundColor = "transparent"
+        this.img.src = URL.createObjectURL(this.toolbar.fileInput.files.item(0))
+        this.img.style.backgroundColor = "transparent"
     }
 
 
@@ -605,11 +647,13 @@ class ImageFunctions {
     }
 
     enableImageResize = () => {
+        this.dragImageElement(this.img)
         this.dragImageElement(this.element)
     }
 
     disableImageResize = () => {
-        this.element.onmousedown = undefined
+        this.img.onmousedown = undefined
+        this.element.onmousedown = undefined 
     }
 
     dragImageElement = (elmnt) => {
@@ -10885,4 +10929,3 @@ external_root_jQuery_commonjs2_jquery_commonjs_jquery_amd_jquery_default.a.summe
 
 /******/ });
 });
-//# sourceMappingURL=summernote.js.map

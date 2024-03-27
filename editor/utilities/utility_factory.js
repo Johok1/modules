@@ -15,7 +15,7 @@ export default class UtilityFactory {
     constructTextUtility = () => {
         const page = document.getElementById("page");
         const font = this.createElement('font', { innerText: 'New Text' }, { color: 'black' });
-        const label = this.createElement('p', { draggable: false, className: 'comp' }, {});
+        const label = this.createElement('p', { draggable: false, className: 'textParagraph' }, {});
         label.appendChild(font);
 
         const labelDivStyles = {
@@ -24,6 +24,7 @@ export default class UtilityFactory {
         };
         const labelDiv = this.createElement('div', { className: 'text drag' }, labelDivStyles);
         labelDiv.appendChild(label);
+        labelDiv.style.padding = "35px"
         page.appendChild(labelDiv);
         let utility = this.getUtility(labelDiv)
         utility.enableDrag()
@@ -32,10 +33,19 @@ export default class UtilityFactory {
     // Method to construct the image utility
     constructImageUtility = () => {
         const page = document.getElementById("page");
-        const imgStyles = { backgroundColor: 'grey', zIndex: '1' };
-        const img = this.createElement('img', { className: 'image drag', draggable: false }, imgStyles);
-        page.appendChild(img);
-        let utility = this.getUtility(img)
+        const imgStyles = {padding: "30px" };
+        let img = this.createElement('img');
+        img.style.backgroundColor = "grey"
+        img.style.width = "25px"
+        img.style.height = "25px"
+        img.draggable = false
+        img.style.userSelect = "none"
+        let div = this.createElement('div', { className: 'image drag', draggable: false }, imgStyles)
+        div.style.width = "250px"
+        div.style.height = "250px"
+        div.appendChild(img)
+        page.appendChild(div);
+        let utility = this.getUtility(div)
         utility.enableDrag()
     }
 

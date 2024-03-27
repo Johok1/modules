@@ -54,28 +54,7 @@ describe('View Class Tests', () => {
         });
     });
 
-    describe('Selection Handling', () => {
-        beforeEach(() => {
-            spyOn(view.utilityHelper, 'enableAllSelect');
-            spyOn(view.utilityHelper, 'disableAllSelect');
-            spyOn(view.utilityHelper, 'toggleSelect');
-            spyOn(view.utilityHelper, 'registerAllHandlers');
-            spyOn(console, 'log'); // To prevent actual logging
-        });
-
-        it('should toggle select state', () => {
-            view.toggleSelect();
-            expect(view.select).toBeTruthy();
-            view.toggleSelect();
-            expect(view.select).toBeFalsy();
-        });
-
-        it('should handle select enablement and disablement', () => {
-            view.handleSelectToggle();
-            expect(view.utilityHelper.toggleSelect).toHaveBeenCalled();
-            // Add checks for both enabled and disabled states
-        });
-    });
+   
 
     // Add more tests as necessary for other methods and behaviors
 });
@@ -112,23 +91,43 @@ describe('Utility Creation and Event Handling', () => {
 
     describe('when utilities are created', () => {
         beforeEach(() => {
+            // Mocking the utility creation process to avoid side effects
+            spyOn(view.utilityFactory, 'constructTextUtility').and.callFake(() => {
+                // Simulate the creation of a text utility, possibly appending a mock element to the DOM or similar
+                let mockTextElement = document.createElement('div');
+                mockTextElement.className = 'text';
+                document.body.appendChild(mockTextElement);
+                // Simulating the registration of handlers as it would happen in the actual method
+                view.utilityHelper.registerElementHandlers('.text', view.utilityHelper.registerTextHandlers);
+            });
+            spyOn(view.utilityFactory, 'constructImageUtility').and.callFake(() => {
+                let mockImageElement = document.createElement('img');
+                mockImageElement.className = 'image';
+                document.body.appendChild(mockImageElement);
+                view.utilityHelper.registerElementHandlers('.image', view.utilityHelper.registerImageHandlers);
+            });
+
             spyOn(view.utilityHelper, 'registerElementHandlers').and.callThrough();
-            // Prepare the environment for testing utility creation
             view.initializeEventListeners();
         });
 
         it('should apply selection handlers to text utilities', () => {
-            mockTextElement.click(); // Simulate text button click to create text utility
+            view.textBtn.click(); // Simulate text button click to create text utility
             expect(view.utilityHelper.registerElementHandlers).toHaveBeenCalledWith('.text', jasmine.any(Function));
-            // You can add more specific checks here, such as whether specific handlers were registered
+
         });
 
         it('should apply selection handlers to image utilities', () => {
-            mockImageElement.click(); // Simulate image button click to create image utility
+            view.imgBtn.click(); // Simulate image button click to create image utility
             expect(view.utilityHelper.registerElementHandlers).toHaveBeenCalledWith('.image', jasmine.any(Function));
-            // You can add more specific checks here, such as whether specific handlers were registered
+        });
+
+        afterEach(() => {
+            // Clean up any mock elements added to the DOM
+            document.body.querySelectorAll('.text, .image').forEach(el => el.remove());
         });
     });
+
 
     // Add more tests as necessary
 });

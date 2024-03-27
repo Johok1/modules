@@ -13,50 +13,52 @@ export default class ImageToolbar {
         }
     }
     constructToolbar = () => {
-        this.dragButton = document.createElement("button")
-        this.dragButton.innerText = "Enable Drag"
-
-
-        this.disableDragButton = document.createElement("button")
-        this.disableDragButton.innerText = "Disable Drag"
+      
 
 
         this.resizeButton = document.createElement("button")
         this.resizeButton.innerText = "Resize Image"
-
+        this.resizeButton.classList.add("image-popup")
 
         this.disableResizeButton = document.createElement("button")
         this.disableResizeButton.innerText = "Disable Resize"
-
+        this.disableResizeButton.classList.add("image-popup")
 
         this.fileInput = document.createElement("input")
         this.fileInput.type = "file"
         this.fileInput.innerText = "Input Image"
         this.fileInput.style.cursor = "pointer"
-
+        this.fileInput.classList.add("image-popup")
 
         this.img = document.createElement("img")
         this.img.style.width = "25px"
         this.img.style.height = "25px"
         this.img.style.backgroundColor = "grey"
+        this.img.classList.add("image-popup")
+
         this.fileInputSubmit = document.createElement("button")
         this.fileInputSubmit.innerText = "Submit Image"
+        this.fileInputSubmit.classList.add("image-popup")
+
         this.div = document.createElement("div")
+        this.div.classList.add("image-popup")
+        
         this.div.appendChild(this.fileInput)
         this.div.appendChild(this.img)
 
 
-        this.toolbarDiv.appendChild(this.dragButton)
-        this.toolbarDiv.appendChild(this.disableDragButton)
-        this.toolbarDiv.appendChild(this.resizeButton)
-        this.toolbarDiv.appendChild(this.disableResizeButton)
-        this.toolbarDiv.appendChild(this.fileInputSubmit)
-        this.toolbarDiv.appendChild(this.div)
+      
+        this.element.appendChild(this.resizeButton)
+        this.element.appendChild(this.disableResizeButton)
+        this.element.appendChild(this.fileInputSubmit)
+        this.element.appendChild(this.div)
 
 
     }
 
-
+    deconstructToolbar = () => {
+        $('.image-popup').remove()
+    }
 
 
 

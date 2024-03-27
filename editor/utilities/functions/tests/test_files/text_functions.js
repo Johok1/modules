@@ -2,18 +2,23 @@
 
 class TextFunctions {
 
-    constructor(element) {
+    constructor(element,func,func2) {
         this.element = element
+        this.deconstructToolbar = func
+        this.constructToolbar = func2
     }
 
     handleEditText = () => {
         console.log(this.element)
         console.log(this.element.firstChild)
+        this.deconstructToolbar()
         this.element.classList.add("summernote")
         let top = this.element.style.top
         let left = this.element.style.left
         let width = this.element.style.width
         let height = this.element.style.height
+        let handleDisableEditText = this.handleDisableEditText
+        
         $(document).ready(function () {
             $('.summernote').summernote({
                 focus: true, airMode: true, popover: {
@@ -35,6 +40,15 @@ class TextFunctions {
                 width: width,
                 height: height
             })
+            let disableEditBtn = $('<button class="disable-edit-button">Disable Edit</button>');
+
+            // Add an event listener to the button
+           
+
+            $('.note-editor').append(disableEditBtn)
+
+            $('.disable-edit-button').on("click", handleDisableEditText);
+            
         });
     }
 
@@ -46,6 +60,8 @@ class TextFunctions {
         $('.summernote').summernote('destroy');
 
         $('.summernote').removeClass('summernote')
+
+        this.constructToolbar()
     }
 
 
@@ -73,33 +89,23 @@ class TextFunctions {
     }
 
 
+     boxResize = (resizeButton) => {
+        // Initiate resizing - attach mousemove to document
+        resizeButton.onmousedown = (event) => {
+            document.addEventListener("mousemove", this.onBoxResize);
+            event.preventDefault(); // Prevent default drag behavior
+        };
 
-    boxResize = () => {
-        this.initResizeBoxElement(this.element)
+        // End resizing - remove mousemove from document
+        document.onmouseup = () => {
+            document.removeEventListener("mousemove", this.onBoxResize);
+        };
     }
 
-    boxDisableResize = () => {
-        this.element.onmousedown = undefined
-    }
-
-    initResizeBoxElement = (elmnt) => {
-
-
-
-        // otherwise, move the DIV from anywhere inside the DIV:
-        elmnt.onmousedown = this.resizeBoxElement
-        elmnt.onmouseleave = this.stopBoxResize
-        elmnt.onmouseup = this.stopBoxResize
-
-    }
-
-    stopBoxResize = (event) => {
-        event.currentTarget.removeEventListener("mousemove", this.onBoxResize)
-    }
-
-    resizeBoxElement = (event) => {
-
-        event.currentTarget.addEventListener("mousemove", this.onBoxResize)
+    boxDisableResize = (resizeButton) => {
+        // Just in case you want to explicitly remove the ability to resize
+        resizeButton.onmousedown = undefined;
+        document.onmouseup = undefined;
     }
 
     onBoxResize({ movementX, movementY }) {
@@ -10419,4 +10425,3 @@ external_root_jQuery_commonjs2_jquery_commonjs_jquery_amd_jquery_default.a.summe
 
 /******/ });
 });
-//# sourceMappingURL=summernote.js.map

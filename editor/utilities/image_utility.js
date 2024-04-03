@@ -15,22 +15,27 @@ export default class ImageUtility extends Utility {
 
     selectElement = () => {
         this.functions.disableDragMode()
-        this.element.style.border = "solid 1px red"
+        this.element.querySelector(".image-main").style.border = "3px solid red"
+        this.functions.attachFileInputHandler()
 
     }
 
     deselectElement = () => {
         this.enableDrag()
-        this.element.style.border = "none"
+        this.element.querySelector(".image-main").style.border = "none"
+        this.functions.removeFileInputHandler()
+        this.deconstructToolbar()
     }
 
     constructToolbar = () => {
         this.toolbar.constructToolbar()
-        this.attachFileInputHandler(this.functions.handleFileInput)
-        this.attachFileInputSubmitHandler()
-        
+       // this.attachFileInputHandler(this.functions.handleFileInput)
+      //  this.attachFileInputSubmitHandler()
+
+        this.initCancelSelectionBtn()
         this.initEnableImageResize()
-        this.initDisableImageResize()
+       
+       
 
     }
 
@@ -38,10 +43,14 @@ export default class ImageUtility extends Utility {
         this.toolbar.deconstructToolbar()
     }
 
+   
+
     enableDrag = () => {
         this.functions.enableDragMode()
     }
-
+    initCancelSelectionBtn = () => {
+        this.toolbar.cancelSelectionBtn.addEventListener("click", this.deselectElement)
+    }
 
     attachFileInputSubmitHandler = () => {
         this.toolbar.fileInputSubmit.addEventListener("click", this.functions.handleFileInputSubmit)
@@ -53,11 +62,21 @@ export default class ImageUtility extends Utility {
 
   
     initEnableImageResize = () => {
-        this.toolbar.resizeButton.addEventListener("click", this.functions.enableImageResize)
+        let onBoxResize = this.functions.onImageDrag
+        let element = this.element
+      //  console.log(element)
+        this.toolbar.resizeButton.addEventListener("mousedown", (event) => {
+            // Initiate resizing - attach mousemove to document
+            element.addEventListener("mousemove", onBoxResize);
+            event.preventDefault(); // Prevent default drag behavior
+        });
+
+        document.addEventListener("mouseup", () => {
+            // End resizing - remove mousemove from document
+            element.removeEventListener("mousemove", onBoxResize);
+        });
     }
 
-    initDisableImageResize = () => {
-        this.toolbar.disableResizeButton.addEventListener("click", this.functions.disableImageResize)
-    }
+   
 
 }

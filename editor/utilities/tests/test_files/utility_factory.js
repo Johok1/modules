@@ -17,9 +17,10 @@ class UtilityFactory {
         const font = this.createElement('font', { innerText: 'New Text' }, { color: 'black' });
         const label = this.createElement('p', { draggable: false, className: 'textParagraph' }, {});
         label.appendChild(font);
+   
 
         const labelDivStyles = {
-            width: '300px', height: '200px', overflowY: 'auto',
+            width: '300px',  overflowY: 'auto',
             position: 'absolute', wordWrap: 'break-word', zIndex: '1'
         };
         const labelDiv = this.createElement('div', { className: 'text drag' }, labelDivStyles);
@@ -36,13 +37,20 @@ class UtilityFactory {
         const imgStyles = {padding: "30px" };
         let img = this.createElement('img');
         img.style.backgroundColor = "grey"
-        img.style.width = "25px"
-        img.style.height = "25px"
+        img.style.width = "75px"
+        img.style.height = "75px"
         img.draggable = false
+        img.classList.add("image-main")
         img.style.userSelect = "none"
+        let input = document.createElement("input")
+        input.classList.add("image-input")
+        input.type = "file"
+        input.accept = "image/jpeg, image/png, image/jpg"
+        input.classList.add("hidden")
+        img.appendChild(input)
         let div = this.createElement('div', { className: 'image drag', draggable: false }, imgStyles)
-        div.style.width = "250px"
-        div.style.height = "250px"
+        div.style.width = "150px"
+        div.style.height = "150px"
         div.appendChild(img)
         page.appendChild(div);
         let utility = this.getUtility(div)
@@ -100,22 +108,27 @@ class ImageUtility extends Utility {
 
     selectElement = () => {
         this.functions.disableDragMode()
-        this.element.style.border = "solid 1px red"
+        this.element.querySelector(".image-main").style.border = "3px solid red"
+        this.functions.attachFileInputHandler()
 
     }
 
     deselectElement = () => {
         this.enableDrag()
-        this.element.style.border = "none"
+        this.element.querySelector(".image-main").style.border = "none"
+        this.functions.removeFileInputHandler()
+        this.deconstructToolbar()
     }
 
     constructToolbar = () => {
         this.toolbar.constructToolbar()
-        this.attachFileInputHandler(this.functions.handleFileInput)
-        this.attachFileInputSubmitHandler()
-        
+       // this.attachFileInputHandler(this.functions.handleFileInput)
+      //  this.attachFileInputSubmitHandler()
+
+        this.initCancelSelectionBtn()
         this.initEnableImageResize()
-        this.initDisableImageResize()
+       
+       
 
     }
 
@@ -123,10 +136,14 @@ class ImageUtility extends Utility {
         this.toolbar.deconstructToolbar()
     }
 
+   
+
     enableDrag = () => {
         this.functions.enableDragMode()
     }
-
+    initCancelSelectionBtn = () => {
+        this.toolbar.cancelSelectionBtn.addEventListener("click", this.deselectElement)
+    }
 
     attachFileInputSubmitHandler = () => {
         this.toolbar.fileInputSubmit.addEventListener("click", this.functions.handleFileInputSubmit)
@@ -138,12 +155,22 @@ class ImageUtility extends Utility {
 
   
     initEnableImageResize = () => {
-        this.toolbar.resizeButton.addEventListener("click", this.functions.enableImageResize)
+        let onBoxResize = this.functions.onImageDrag
+        let element = this.element
+      //  console.log(element)
+        this.toolbar.resizeButton.addEventListener("mousedown", (event) => {
+            // Initiate resizing - attach mousemove to document
+            element.addEventListener("mousemove", onBoxResize);
+            event.preventDefault(); // Prevent default drag behavior
+        });
+
+        document.addEventListener("mouseup", () => {
+            // End resizing - remove mousemove from document
+            element.removeEventListener("mousemove", onBoxResize);
+        });
     }
 
-    initDisableImageResize = () => {
-        this.toolbar.disableResizeButton.addEventListener("click", this.functions.disableImageResize)
-    }
+   
 
 }
 
@@ -180,7 +207,9 @@ class TextUtility extends Utility {
     constructToolbar = () => {
         this.toolbar.constructToolbar()
         this.initBoxResizeBtn()
-        this.initEditTextBtn() 
+        this.initEditTextBtn()
+        this.initCancelSelectionBtn()
+      
     }
 
     
@@ -211,12 +240,10 @@ class TextUtility extends Utility {
 
    
 
+   
+
     initEditTextBtn = () => {
         this.toolbar.editTextBtn.addEventListener("click", this.functions.handleEditText)
-    }
-
-    initDisableEditTextBtn = () => {
-        this.toolbar.disableEditText.addEventListener("click", this.functions.handleDisableEditText)
     }
 
 
@@ -243,10 +270,10 @@ class ImageToolbar {
         this.resizeButton = document.createElement("button")
         this.resizeButton.innerText = "Resize Image"
         this.resizeButton.classList.add("image-popup")
+        this.resizeButton.style.position = "absolute"
+        this.resizeButton.style.bottom = "30px"
+        this.resizeButton.style.right = "10px"
 
-        this.disableResizeButton = document.createElement("button")
-        this.disableResizeButton.innerText = "Disable Resize"
-        this.disableResizeButton.classList.add("image-popup")
 
         this.fileInput = document.createElement("input")
         this.fileInput.type = "file"
@@ -270,12 +297,20 @@ class ImageToolbar {
         this.div.appendChild(this.fileInput)
         this.div.appendChild(this.img)
 
+        this.cancelSelectionBtn = document.createElement("button")
+        this.cancelSelectionBtn.innerText = "Exit"
+        this.cancelSelectionBtn.classList.add("image-popup")
+        this.cancelSelectionBtn.style.position = "absolute"
+        this.cancelSelectionBtn.style.bottom = "0px"
+        this.cancelSelectionBtn.style.left = "0px"
 
+
+        this.element.appendChild(this.cancelSelectionBtn)
       
         this.element.appendChild(this.resizeButton)
-        this.element.appendChild(this.disableResizeButton)
-        this.element.appendChild(this.fileInputSubmit)
-        this.element.appendChild(this.div)
+
+      //  this.element.appendChild(this.fileInputSubmit)
+      //  this.element.appendChild(this.div)
 
 
     }
@@ -317,28 +352,30 @@ class TextToolbar {
         this.resizeButton.classList.add("text-popup")
 
         this.resizeButton.style.position = "absolute"
-        this.resizeButton.style.bottom = "0px"
+        this.resizeButton.style.top = (parseInt(this.element.querySelector(".textParagraph").style.height) / 2 +17) +  "px"
         this.resizeButton.style.right = "0px"
 
-     
+ 
         this.editTextBtn = document.createElement("button")
         this.editTextBtn.innerText = "Edit"
         this.editTextBtn.classList.add("text-popup")
         this.editTextBtn.style.position = "absolute"
-        this.editTextBtn.style.top = "0px"
+        this.editTextBtn.style.top = "35px"
         this.editTextBtn.style.left = "0px"
 
         this.cancelSelectionBtn = document.createElement("button")
-        this.cancelSelectionBtn.innerText = "Cancel"
+        this.cancelSelectionBtn.innerText = "Exit"
         this.cancelSelectionBtn.classList.add("text-popup")
         this.cancelSelectionBtn.style.position = "absolute"
-        this.cancelSelectionBtn.style.bottom = "0px"
+        this.cancelSelectionBtn.style.bottom = (parseInt(this.element.style.height) -
+            parseInt(this.element.querySelector(".textParagraph").style.height) + 35) + "px"
         this.cancelSelectionBtn.style.left = "0px"
 
 
         this.element.appendChild(this.cancelSelectionBtn)
         this.element.appendChild(this.editTextBtn)
         this.element.appendChild(this.resizeButton)
+   
       
         
       
@@ -427,6 +464,8 @@ class TextFunctions {
         $('.summernote').removeClass('summernote')
 
         this.constructToolbar()
+
+        this.element.style.height = (parseInt(this.element.querySelector(".textParagraph").style.height) + 50) + "px"
     }
 
 
@@ -495,8 +534,23 @@ class TextFunctions {
 
         // Update the element's size
         this.style.width = `${newWidth}px`;
-        this.style.height = `${newHeight}px`;
+        //this.style.height = `${newHeight}px`;
     }
+
+    boxResizeLeft = (resizeButton) => {
+        // Initiate resizing - attach mousemove to document
+        resizeButton.onmousedown = (event) => {
+            document.addEventListener("mousemove", this.onBoxResize);
+            event.preventDefault(); // Prevent default drag behavior
+        };
+
+        // End resizing - remove mousemove from document
+        document.onmouseup = () => {
+            document.removeEventListener("mousemove", this.onBoxResize);
+        };
+    }
+
+
 
 
     enableDragMode = () => {
@@ -580,10 +634,91 @@ class ImageFunctions {
     }
 
 
-    handleFileInput = () => {
-        let file = URL.createObjectURL(this.toolbar.fileInput.files.item(0))
-        this.toolbar.img.src = file
+    attachFileInputHandler = () => {
+
+        let image = this.element.querySelector(".image-main")
+
+
+        function preventDefaults(e) {
+            e.preventDefault()
+            e.stopPropagation()
+        }
+
+        // Prevent default drag behaviors
+        ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            image.addEventListener(eventName, preventDefaults, false)
+            document.body.addEventListener(eventName, preventDefaults, false)
+        })
+
+        this.element.querySelector(".image-main").addEventListener("drop", this.handleFileInput, false)
     }
+
+    removeFileInputHandler = () => {
+        this.element.querySelector(".image-main").removeEventListener("drop", this.handleFileInput)
+    }
+
+    handleFileInput = (e) => {
+        this.element.querySelector(".image-main").style.backgroundColor = "transparent"
+        let file = e.dataTransfer.files.item(0)
+        this.processFile(file)
+            .then(result => {
+                console.log("process file result " + result)
+                this.element.querySelector(".image-main").src = result
+            })
+      
+       
+    }
+
+    processFile = (file) => {
+    if (!file) {
+        return;
+    }
+    console.log(file);
+
+
+    // Load the data into an image
+    return new Promise(function (resolve, reject) {
+        let rawImage = new Image();
+
+        rawImage.addEventListener("load", function () {
+            resolve(rawImage);
+        });
+
+        rawImage.src = URL.createObjectURL(file);
+    })
+        .then(function (rawImage) {
+            // Convert image to webp ObjectURL via a canvas blob
+            return new Promise(function (resolve, reject) {
+                let canvas = document.createElement('canvas');
+                let ctx = canvas.getContext("2d");
+
+                canvas.width = rawImage.width;
+                canvas.height = rawImage.height;
+                ctx.drawImage(rawImage, 0, 0);
+
+                canvas.toBlob(function (blob) {
+                    resolve(URL.createObjectURL(blob));
+                }, "image/webp");
+            });
+        })
+        .then(function (imageURL) {
+            // Load image for display on the page
+            return new Promise(function (resolve, reject) {
+                let scaledImg = new Image();
+
+                scaledImg.addEventListener("load", function () {
+                    resolve({ imageURL, scaledImg });
+                });
+
+                scaledImg.setAttribute("src", imageURL);
+            });
+        })
+        .then(function (data) {
+
+             return data.imageURL
+            
+        });
+}
 
     enableDragMode = () => {
 
@@ -698,7 +833,16 @@ class ImageFunctions {
 
         // Update the element's size
         this.style.width = `${newWidth}px`;
-        this.style.height = `${newHeight}px`;
+        this.style.height = `${newWidth}px`;
+
+        let imageWidth = parseFloat(this.querySelector(".image-main").style.width) || 0; // Use 0 if width is not defined
+        let imageHeight = parseFloat(this.querySelector(".image-main").style.height) || 0; // Use 0 if height is not defined
+
+        let newImageWidth = imageWidth + movementX
+        let newImageHeight = imageHeight + movementY
+
+        this.querySelector(".image-main").style.width = newImageWidth + "px"
+        this.querySelector(".image-main").style.height = newImageWidth + "px"
     }
 }
 

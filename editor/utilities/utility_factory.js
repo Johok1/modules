@@ -17,9 +17,10 @@ export default class UtilityFactory {
         const font = this.createElement('font', { innerText: 'New Text' }, { color: 'black' });
         const label = this.createElement('p', { draggable: false, className: 'textParagraph' }, {});
         label.appendChild(font);
+   
 
         const labelDivStyles = {
-            width: '300px', height: '200px', overflowY: 'auto',
+            width: '300px',  overflowY: 'auto',
             position: 'absolute', wordWrap: 'break-word', zIndex: '1'
         };
         const labelDiv = this.createElement('div', { className: 'text drag' }, labelDivStyles);
@@ -36,13 +37,20 @@ export default class UtilityFactory {
         const imgStyles = {padding: "30px" };
         let img = this.createElement('img');
         img.style.backgroundColor = "grey"
-        img.style.width = "25px"
-        img.style.height = "25px"
+        img.style.width = "75px"
+        img.style.height = "75px"
         img.draggable = false
+        img.classList.add("image-main")
         img.style.userSelect = "none"
+        let input = document.createElement("input")
+        input.classList.add("image-input")
+        input.type = "file"
+        input.accept = "image/jpeg, image/png, image/jpg"
+        input.classList.add("hidden")
+        img.appendChild(input)
         let div = this.createElement('div', { className: 'image drag', draggable: false }, imgStyles)
-        div.style.width = "250px"
-        div.style.height = "250px"
+        div.style.width = "150px"
+        div.style.height = "150px"
         div.appendChild(img)
         page.appendChild(div);
         let utility = this.getUtility(div)

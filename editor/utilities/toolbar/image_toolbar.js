@@ -19,10 +19,10 @@ export default class ImageToolbar {
         this.resizeButton = document.createElement("button")
         this.resizeButton.innerText = "Resize Image"
         this.resizeButton.classList.add("image-popup")
+        this.resizeButton.style.position = "absolute"
+        this.resizeButton.style.bottom = "30px"
+        this.resizeButton.style.right = "10px"
 
-        this.disableResizeButton = document.createElement("button")
-        this.disableResizeButton.innerText = "Disable Resize"
-        this.disableResizeButton.classList.add("image-popup")
 
         this.fileInput = document.createElement("input")
         this.fileInput.type = "file"
@@ -46,12 +46,20 @@ export default class ImageToolbar {
         this.div.appendChild(this.fileInput)
         this.div.appendChild(this.img)
 
+        this.cancelSelectionBtn = document.createElement("button")
+        this.cancelSelectionBtn.innerText = "Exit"
+        this.cancelSelectionBtn.classList.add("image-popup")
+        this.cancelSelectionBtn.style.position = "absolute"
+        this.cancelSelectionBtn.style.bottom = "0px"
+        this.cancelSelectionBtn.style.left = "0px"
 
+
+        this.element.appendChild(this.cancelSelectionBtn)
       
         this.element.appendChild(this.resizeButton)
-        this.element.appendChild(this.disableResizeButton)
-        this.element.appendChild(this.fileInputSubmit)
-        this.element.appendChild(this.div)
+
+      //  this.element.appendChild(this.fileInputSubmit)
+      //  this.element.appendChild(this.div)
 
 
     }

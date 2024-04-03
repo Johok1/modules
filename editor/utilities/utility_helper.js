@@ -88,7 +88,7 @@ export default class UtilityHelper {
     selectHandler = (utilityElement) => {
         console.log(this.select)
         console.log(this.selectedEl)
-
+        console.log(utilityElement.element)
 
 
         if (this.selectedEl && !(this.selectedEl === utilityElement)) {
@@ -105,7 +105,7 @@ export default class UtilityHelper {
         }
 
         else if (!this.selectedEl && !(this.selectedEl === utilityElement)) {
-            console.log(utilityElement.element); // Assuming necessary for debugging
+           // Assuming necessary for debugging
             console.log("select case 2")
             utilityElement.constructToolbar();
             utilityElement.selectElement();
@@ -115,13 +115,21 @@ export default class UtilityHelper {
         }
 
         else if (this.select && (this.selectedEl === utilityElement)) {
-            this.selectedEl.deselectElement()
-            this.selectedEl.deconstructToolbar()
-            this.selectedEl.enableDrag()
-            this.selectedEl = undefined
-            this.toolbarDiv.innerHTML = ""
-            this.selectedEl = undefined
-            this.select = false
+            console.log("select case 3")
+            if ((document.querySelectorAll(".text-popup").length <= 0) && (document.querySelectorAll(".image-popup").length <= 0)) {
+                utilityElement.constructToolbar();
+                utilityElement.selectElement();
+                this.selectedEl = utilityElement;
+                this.selectedEl.functions.disableDragMode()
+                this.select = true
+            }
+            /*
+            utilityElement.constructToolbar();
+            utilityElement.selectElement();
+            this.selectedEl = utilityElement;
+            this.selectedEl.functions.disableDragMode()
+            this.select = true
+            */
 
         }
     }

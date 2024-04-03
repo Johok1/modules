@@ -62,6 +62,8 @@ export default class TextFunctions {
         $('.summernote').removeClass('summernote')
 
         this.constructToolbar()
+
+        this.element.style.height = (parseInt(this.element.querySelector(".textParagraph").style.height) + 50) + "px"
     }
 
 
@@ -130,8 +132,23 @@ export default class TextFunctions {
 
         // Update the element's size
         this.style.width = `${newWidth}px`;
-        this.style.height = `${newHeight}px`;
+        //this.style.height = `${newHeight}px`;
     }
+
+    boxResizeLeft = (resizeButton) => {
+        // Initiate resizing - attach mousemove to document
+        resizeButton.onmousedown = (event) => {
+            document.addEventListener("mousemove", this.onBoxResize);
+            event.preventDefault(); // Prevent default drag behavior
+        };
+
+        // End resizing - remove mousemove from document
+        document.onmouseup = () => {
+            document.removeEventListener("mousemove", this.onBoxResize);
+        };
+    }
+
+
 
 
     enableDragMode = () => {

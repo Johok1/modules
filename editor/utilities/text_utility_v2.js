@@ -33,6 +33,7 @@ export default class TextUtility extends Utility {
         this.initBoxResizeBtn()
         this.initEditTextBtn()
         this.initCancelSelectionBtn()
+      
     }
 
     
@@ -60,6 +61,8 @@ export default class TextUtility extends Utility {
         });
 
     }
+
+   
 
    
 

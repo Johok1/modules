@@ -10612,11 +10612,16 @@ class TextFunctions {
         this.style.top = `${newTop}px`;
     }
 }
+
+
+
 class ImageFunctions {
     constructor(element,img, toolbar) {
         this.element = element
         this.toolbar = toolbar
-        this.img = img 
+        this.img = img
+        this.controller = new Controller()
+        this.cookie = new Cookie()
     }
 
     enableFileDrop = () => {
@@ -10658,10 +10663,28 @@ class ImageFunctions {
         this.processFile(file)
             .then(result => {
                 console.log("process file result " + result)
+
                 this.element.querySelector(".image-main").src = result
+                this.element.querySelector(".image-main").id = result
+                let val1 = this.element.querySelector(".image-main").src 
+                let val2 = this.element.querySelector(".image-main").id
+                console.log("src: " + val1 + " " + "id: " + val2 + " are equal? " + (val1 === val2))
+                this.addImageToBackend(url)
             })
-      
-       
+    }
+
+    addImageToBackend = (url) => {
+        const memberId = this.cookie.getCookie("memberId")
+        const pageId = this.cookie.getCookie("pageId")
+        this.controller.addPageImageUrl(memberId, pageId, url)
+            .then(response => response.text())
+            .then(response => {
+                if (response === "true") {
+                    console.log("Image Submitted Successfully!")
+                } else {
+                    console.error(response)
+                }
+            })
     }
 
     processFile = (file) => {
@@ -10841,6 +10864,90 @@ class ImageFunctions {
     }
 }
 
+class Controller {
+    constructor() {
+        this.fetch_url_account = "https://www.zinxswiki.com/account"
+    }
+
+    getPageUrlList(pageId) {
+        return fetch(this.fetch_url_account + "/getPageImageUrls/" + pageId, {
+            method: 'GET',
+            headers: {
+                'Access-Control-Allow-Origin': '*'
+            }
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+
+    addPageImageUrl(wixId, pageId,url) {
+        var imageUrlRequest = {
+            url: url,
+            blank: ""
+        };
+        return fetch(this.fetch_url_account + "/addPageImageUrl/" + wixId + "/" + pageId, {
+            method: 'POST',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'plain/text'
+            },
+            body: imageUrlRequest
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+
+    getAccountPageContent(wixId, pageId) {
+        return fetch(this.fetch_url_account + "/getAccountPageContent/" + wixId + "/" + pageId, {
+            method: 'GET',
+            headers: {
+                'Access-Control-Allow-Origin': '*'
+            }
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+
+    postAccountPageContent(wixId, pageId, content) {
+        return fetch(this.fetch_url_account + "/postAccountPageContent/" + wixId + "/" + pageId, {
+            method: 'POST',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'plain/text'
+            },
+            body: content
+        }).catch(error => {
+            console.error(error);
+        });
+    }
+
+}
+class Cookie {
+    setCookie(cname, cvalue, exhours) {
+        const d = new Date();
+        d.setTime(d.getTime() + (exhours * 60 * 60 * 1000));
+        let expires = "expires=" + d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    getCookie(cname) {
+        let name = cname + "=";
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) === 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+}
 
 
 class UtilityHelper {

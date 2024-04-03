@@ -1,8 +1,13 @@
+import Cookie from '../backend/cookie.js'
+import Controller from '../backend/controller.js'
+
 export default class ImageFunctions {
     constructor(element,img, toolbar) {
         this.element = element
         this.toolbar = toolbar
-        this.img = img 
+        this.img = img
+        this.controller = new Controller()
+        this.cookie = new Cookie()
     }
 
     enableFileDrop = () => {
@@ -44,10 +49,28 @@ export default class ImageFunctions {
         this.processFile(file)
             .then(result => {
                 console.log("process file result " + result)
+
                 this.element.querySelector(".image-main").src = result
+                this.element.querySelector(".image-main").id = result
+                let val1 = this.element.querySelector(".image-main").src 
+                let val2 = this.element.querySelector(".image-main").id
+                console.log("src: " + val1 + " " + "id: " + val2 + " are equal? " + (val1 === val2))
+                this.addImageToBackend(url)
             })
-      
-       
+    }
+
+    addImageToBackend = (url) => {
+        const memberId = this.cookie.getCookie("memberId")
+        const pageId = this.cookie.getCookie("pageId")
+        this.controller.addPageImageUrl(memberId, pageId, url)
+            .then(response => response.text())
+            .then(response => {
+                if (response === "true") {
+                    console.log("Image Submitted Successfully!")
+                } else {
+                    console.error(response)
+                }
+            })
     }
 
     processFile = (file) => {

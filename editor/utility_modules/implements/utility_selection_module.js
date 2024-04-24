@@ -1,8 +1,8 @@
 import UtilitySelectionModuleInterface from "../utility_selection_module_interface";
 
 export default class UtilitySelectionModule extends UtilitySelectionModuleInterface {
-    constructor(editorUtilityInterface) {
-        super(editorUtilityInterface)
+    constructor() {
+        super()
     }
 
     selectHandler = (utilityElementSelected) => {

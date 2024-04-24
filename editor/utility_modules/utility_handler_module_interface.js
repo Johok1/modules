@@ -1,7 +1,9 @@
+import EditorUtilityInterface from '..interfaces/editor_utility_interface.js'
+
 export default class UtilityHandlerModuleInterface {
 
-    constructor(editorUtilityInterface) {
-        this.editorUtilityInterface = editorUtilityInterface
+    constructor() {
+        this.editorUtilityInterface = new EditorUtilityInterface()
     }
 
     registerAllHandlers = () => {

@@ -1,6 +1,7 @@
+import EditorUtilityInterface from '..interfaces/editor_utility_interface.js'
 export default class UtilityTranslationModuleInterface {
-    constructor(editorUtilityInterface) {
-        this.editorUtilityInterface = editorUtilityInterface
+    constructor() {
+        this.editorUtilityInterface = new EditorUtilityInterface()
     }
 
     enableDragAll = () => {

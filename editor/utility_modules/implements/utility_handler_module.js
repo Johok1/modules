@@ -1,7 +1,7 @@
 export default class UtilityHandlerModule extends UtilityHandlerModuleInterface {
 
-    constructor(editorUtilityInterface) {
-        super(editorUtilityInterface)
+    constructor() {
+        super()
     }
 
     registerAllHandlers = (select) => {

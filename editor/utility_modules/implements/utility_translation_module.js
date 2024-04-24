@@ -2,8 +2,8 @@ import UtilityTranslationModuleInterface from "../utility_translation_module_int
 
 export default class UtilityTranslationModule extends UtilityTranslationModuleInterface{
 
-    constructor(editorUtilityInterface) {
-        super(editorUtilityInterface)
+    constructor() {
+        super()
     }
 
     enableDragAll = () => {

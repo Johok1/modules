@@ -13,14 +13,14 @@ export default class ImageUtility extends Utility {
 
 
     selectElement = () => {
-        this.functions.imageBackendFunction.disableDragMode(this.element)
+        this.functions.imageBackendFunction.disableDragMode(this.element.querySelector(".utility-main"))
         this.element.querySelector(".image-main").style.border = "2px solid red"
         this.functions.imageBackendFunction.attachFileInputHandler(this.element)
 
     }
 
     deselectElement = () => {
-        this.functions.imageBackendFunction.enableDragMode(this.element)
+        this.functions.imageBackendFunction.enableDragMode(this.element.querySelector(".utility-main"))
         this.element.querySelector(".image-main").style.border = "none"
         this.functions.imageBackendFunction.removeFileInputHandler(this.element)
         this.deconstructToolbar()
@@ -45,7 +45,7 @@ export default class ImageUtility extends Utility {
    
 
     enableDrag = () => {
-        this.functions.imageBackendFunction.enableDragMode(this.element)
+        this.functions.imageBackendFunction.enableDragMode(this.element.querySelector(".utility-main")
     }
     initCancelSelectionBtn = () => {
         this.toolbar.cancelSelectionBtn.addEventListener("click", this.deselectElement)

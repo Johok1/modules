@@ -46,10 +46,10 @@ export default class Function extends FunctionPrototype{
         let container = document.getElementById("page");
         let containerRect = container.getBoundingClientRect();
 
-        let elementStyles = window.getComputedStyle(this);
+        let elementStyles = window.getComputedStyle(this.querySelector(".main"));
         let elementLeft = parseFloat(elementStyles.left) || 0; // Use 0 if left is not defined
         let elementTop = parseFloat(elementStyles.top) || 0; // Use 0 if top is not defined
-        let elementRect = this.getBoundingClientRect()
+        let elementRect = this.querySelector(".main").getBoundingClientRect()
 
         let newLeft = elementLeft + movementX;
         let newTop = elementTop + movementY;

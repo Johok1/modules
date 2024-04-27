@@ -15,7 +15,7 @@ export default class UtilityFactory {
     constructTextUtility = () => {
         const page = document.getElementById("page");
         const font = this.createElement('font', { innerText: 'New Text' }, { color: 'black' });
-        const label = this.createElement('p', { draggable: false, className: 'textParagraph' }, {});
+        const label = this.createElement('p', { draggable: false, className: 'textParagraph main' }, {});
         label.appendChild(font);
    
 
@@ -41,6 +41,7 @@ export default class UtilityFactory {
         img.style.height = "75px"
         img.draggable = false
         img.classList.add("image-main")
+        img.classList.add("main")
         img.style.userSelect = "none"
         let input = document.createElement("input")
         input.classList.add("image-input")

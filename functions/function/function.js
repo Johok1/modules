@@ -8,6 +8,7 @@ export default class Function extends FunctionPrototype{
     enableDragMode = (element) => {
         element.contentEditable = false
         element.style.userSelect = "none"
+        this.element = element
         this.dragElement(element)
     }
 
@@ -19,7 +20,7 @@ export default class Function extends FunctionPrototype{
 
 
     disableDragElement = (elmnt) => {
-
+        
         elmnt.onmousedown = null
     }
 
@@ -33,11 +34,12 @@ export default class Function extends FunctionPrototype{
     }
 
     stopDrag = (event) => {
+        this.element.querySelector(".main").style.border = "none"
         event.currentTarget.removeEventListener("mousemove", this.onMouseDrag)
     }
 
     dragElementDown = (event) => {
-
+        this.element.querySelector(".main").style.border = "2px red solid"
         event.currentTarget.addEventListener("mousemove", this.onMouseDrag)
     }
 
@@ -46,7 +48,8 @@ export default class Function extends FunctionPrototype{
         let container = document.getElementById("page");
         let containerRect = container.getBoundingClientRect();
 
-        let elementStyles = window.getComputedStyle(this.querySelector(".main"));
+        
+        let elementStyles = window.getComputedStyle(this);
         let elementLeft = parseFloat(elementStyles.left) || 0; // Use 0 if left is not defined
         let elementTop = parseFloat(elementStyles.top) || 0; // Use 0 if top is not defined
         let elementRect = this.querySelector(".main").getBoundingClientRect()

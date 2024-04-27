@@ -14,7 +14,7 @@ export default class ImageUtility extends Utility {
 
     selectElement = () => {
         this.functions.imageBackendFunction.disableDragMode(this.element)
-        this.element.querySelector(".image-main").style.border = "3px solid red"
+     //   this.element.querySelector(".image-main").style.border = "3px solid red"
         this.functions.imageBackendFunction.attachFileInputHandler(this.element)
 
     }

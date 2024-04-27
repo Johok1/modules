@@ -25,7 +25,8 @@ export default class UtilityFactory {
         };
         const labelDiv = this.createElement('div', { className: 'text drag' }, labelDivStyles);
         labelDiv.appendChild(label);
-        labelDiv.style.padding = "35px"
+        labelDiv.style.height = "235px"
+        labelDiv.style.width = "335px"
         page.appendChild(labelDiv);
         let utility = this.getUtility(labelDiv)
         utility.enableDrag()
@@ -34,9 +35,9 @@ export default class UtilityFactory {
     // Method to construct the image utility
     constructImageUtility = () => {
         const page = document.getElementById("page");
-        const imgStyles = {padding: "30px" };
+        const imgStyles = { };
         let img = this.createElement('img');
-        img.style.backgroundColor = "grey"
+        img.style.backgroundColor = "transparent"
         img.style.width = "75px"
         img.style.height = "75px"
         img.draggable = false
@@ -52,6 +53,7 @@ export default class UtilityFactory {
         let div = this.createElement('div', { className: 'image drag', draggable: false }, imgStyles)
         div.style.width = "150px"
         div.style.height = "150px"
+        
         div.appendChild(img)
         page.appendChild(div);
         let utility = this.getUtility(div)

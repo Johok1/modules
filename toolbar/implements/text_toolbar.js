@@ -28,15 +28,15 @@ export default class TextToolbar extends Toolbar{
         this.editTextBtn.innerText = "Edit"
         this.editTextBtn.classList.add("text-popup")
         this.editTextBtn.style.position = "absolute"
-        this.editTextBtn.style.top = "35px"
+       
         this.editTextBtn.style.left = "0px"
 
         this.cancelSelectionBtn = document.createElement("button")
         this.cancelSelectionBtn.innerText = "Exit"
         this.cancelSelectionBtn.classList.add("text-popup")
         this.cancelSelectionBtn.style.position = "absolute"
-        this.cancelSelectionBtn.style.bottom = (parseInt(this.element.style.height) -
-            parseInt(this.element.querySelector(".textParagraph").style.height) + 35) + "px"
+        this.cancelSelectionBtn.style.marginTop = "40px"
+        
         this.cancelSelectionBtn.style.left = "0px"
 
 

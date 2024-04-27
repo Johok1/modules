@@ -10,9 +10,9 @@ export default class TextUtility extends Utility {
     }
 
     selectElement = () => {
-        this.element.querySelector(".textParagraph").style.border = "solid 1px red"
+      
         this.functions.summernoteFunction.disableDragMode(this.element)
- 
+      //  this.element.querySelector(".textParagraph").style.border = "solid 2px red"
     }
 
     deselectElement = () => {

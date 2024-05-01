@@ -35,19 +35,22 @@ export default class Function extends FunctionPrototype{
 
     stopDrag = (event) => {
         this.element.querySelector(".main").style.border = "none"
+        document.getElementById("page").classList.remove("dragging")
         event.currentTarget.removeEventListener("mousemove", this.onMouseDrag)
     }
 
     dragElementDown = (event) => {
         this.element.querySelector(".main").style.border = "2px red solid"
+        document.getElementById("page").classList.add("dragging")
         event.currentTarget.addEventListener("mousemove", this.onMouseDrag)
+
     }
 
 
     onMouseDrag({ movementX, movementY }) {
         let container = document.getElementById("page");
         let containerRect = container.getBoundingClientRect();
-
+       
         
         let elementStyles = window.getComputedStyle(this);
         let elementLeft = parseFloat(elementStyles.left) || 0; // Use 0 if left is not defined

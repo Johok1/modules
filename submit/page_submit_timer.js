@@ -22,10 +22,14 @@ export default class PageSubmitTimer {
     submitPage = () => {
         let page = this.page 
         let cookie = this.backendManager.cookie
-        this.backendManager.controller.postAccountPageContent(cookie.getCookie("memberId"), cookie.getCookie("pageId"), page.innerHTML)
-            .then(response => response.text())
-            .then(response => {
-                console.log("post page response: " + response)
-            })
+        if (!page.classList.contains("dragging") && !page.classList.contains("editing")) {
+            this.backendManager.controller.postAccountPageContent(cookie.getCookie("memberId"), cookie.getCookie("pageId"), page.innerHTML)
+                .then(response => response.text())
+                .then(response => {
+                    console.log("post page response: " + response)
+                })
+        } else {
+            console.log("cannot submit while dragging or editing")
+        }
     }
 }

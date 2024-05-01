@@ -13,6 +13,7 @@ export default class ImageUtility extends Utility {
 
 
     selectElement = () => {
+        document.getElementById("page").classList.add("editing")
         this.functions.imageBackendFunction.disableDragMode(this.element)
      //   this.element.querySelector(".image-main").style.border = "3px solid red"
         this.functions.imageBackendFunction.attachFileInputHandler(this.element)
@@ -20,6 +21,7 @@ export default class ImageUtility extends Utility {
     }
 
     deselectElement = () => {
+        document.getElementById("page").classList.remove("editing")
         this.functions.imageBackendFunction.enableDragMode(this.element)
         this.element.querySelector(".image-main").style.border = "none"
         this.functions.imageBackendFunction.removeFileInputHandler(this.element)

@@ -15,16 +15,23 @@ export default class UtilityFactory {
     constructTextUtility = () => {
         const page = document.getElementById("page");
         const font = this.createElement('font', { innerText: 'New Text' }, { color: 'black' });
-        const label = this.createElement('p', { draggable: false, className: 'textParagraph main' }, {});
+        const label = this.createElement('p', { draggable: false, className: 'textParagraph' }, {});
         label.appendChild(font);
-   
+        label.id = "par"
 
         const labelDivStyles = {
             width: '300px',  overflowY: 'auto',
             position: 'absolute', wordWrap: 'break-word', zIndex: '1'
         };
         const labelDiv = this.createElement('div', { className: 'text drag' }, labelDivStyles);
-        labelDiv.appendChild(label);
+
+        let parDiv = document.createElement("div")
+        parDiv.height = label.height
+        parDiv.width = label.width
+        parDiv.appendChild(label)
+        parDiv.classList.add("main")
+        
+        labelDiv.appendChild(parDiv);
         labelDiv.style.height = "235px"
         labelDiv.style.width = "335px"
         page.appendChild(labelDiv);

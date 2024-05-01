@@ -50,7 +50,7 @@ export default class Function extends FunctionPrototype{
     onMouseDrag({ movementX, movementY }) {
         let container = document.getElementById("page");
         let containerRect = container.getBoundingClientRect();
-       
+        let utilityList = container.querySelectorAll(".utility")
         
         let elementStyles = window.getComputedStyle(this);
         let elementLeft = parseFloat(elementStyles.left) || 0; // Use 0 if left is not defined
@@ -69,9 +69,35 @@ export default class Function extends FunctionPrototype{
         // Ensure the element stays within the boundaries
         newLeft = Math.max(minLeft, Math.min(newLeft, maxLeft));
         newTop = Math.max(minTop, Math.min(newTop, maxTop));
-
+        let oldLeft = this.style.left
+        let oldTop = this.style.top 
         // Update the element's position
         this.style.left = `${newLeft}px`;
         this.style.top = `${newTop}px`;
+
+        let utilityCollision = false 
+        let newRect = this.getBoundingClientRect()
+        for (let x = 0; x < utilityList.length; x++) {
+            if (utilityList[x].style.zIndex == this.style.zIndex) {
+                let utilityRect = utilityList[x].getBoundingClientRect()
+                let rect1 = newRect
+                let rect2 = utilityRect
+                console.log("same layer collision possible")
+                if (!(rect2.getX() > rect1.getX() + rect1.getWidth() ||
+                    rect.getX() + rect2.getWidth() < rect1.getX() ||
+                    rect.getY() > rect1.getY() + rect1.getHeight() ||
+                    rect2.getY() + rect2.getHeight < rect1.getY())) {
+                    utilityCollision = true
+                    console.log("isColliding") 
+                }
+            } else {
+                console.log("no collisions on different layers")
+            }
+        }
+
+        if (utilityCollision) {
+            this.style.left = `${oldLeft}px`;
+            this.style.top = `${oldTop}px`;
+        }
     }
 }

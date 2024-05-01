@@ -23,7 +23,7 @@ export default class UtilityFactory {
             width: '300px',  overflowY: 'auto',
             position: 'absolute', wordWrap: 'break-word', zIndex: '1'
         };
-        const labelDiv = this.createElement('div', { className: 'text drag' }, labelDivStyles);
+        const labelDiv = this.createElement('div', { className: 'utility text drag' }, labelDivStyles);
 
         let parDiv = document.createElement("div")
         parDiv.height = label.height
@@ -57,9 +57,10 @@ export default class UtilityFactory {
         input.accept = "image/jpeg, image/png, image/jpg"
         input.classList.add("hidden")
         img.appendChild(input)
-        let div = this.createElement('div', { className: 'image drag', draggable: false }, imgStyles)
+        let div = this.createElement('div', { className: 'utility image drag', draggable: false }, imgStyles)
         div.style.width = "150px"
         div.style.height = "150px"
+        div.style.zIndex = "1"
         
         div.appendChild(img)
         page.appendChild(div);

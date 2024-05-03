@@ -17,15 +17,27 @@ export default class UtilityFactory {
         const font = this.createElement('font', { innerText: 'New Text' }, { color: 'black' });
         const label = this.createElement('p', { draggable: false, className: 'textParagraph utility-main' }, {});
         label.appendChild(font);
-   
+        label.id = "par"
+       
+       
 
         const labelDivStyles = {
             width: '300px',  overflowY: 'auto',
             position: 'absolute', wordWrap: 'break-word', zIndex: '1'
         };
-        const labelDiv = this.createElement('div', { className: 'text drag' }, labelDivStyles);
-        labelDiv.appendChild(label);
-        labelDiv.style.padding = "35px"
+        const labelDiv = this.createElement('div', { className: 'utility text drag' }, labelDivStyles);
+
+        let parDiv = document.createElement("div")
+        parDiv.style.height = label.style.height
+        parDiv.style.width = label.style.width
+        parDiv.appendChild(label)
+        parDiv.classList.add("main")
+       // parDiv.style.zIndex = "2"
+        labelDiv.layer = "1"
+      
+        labelDiv.appendChild(parDiv);
+        labelDiv.style.height = parDiv.style.height
+        labelDiv.style.width = parDiv.style.width
         page.appendChild(labelDiv);
         let utility = this.getUtility(labelDiv)
         utility.enableDrag()
@@ -34,24 +46,29 @@ export default class UtilityFactory {
     // Method to construct the image utility
     constructImageUtility = () => {
         const page = document.getElementById("page");
-        const imgStyles = {padding: "30px" };
+        const imgStyles = { };
         let img = this.createElement('img');
-        img.style.backgroundColor = "grey"
+        img.style.backgroundColor = "transparent"
         img.style.width = "75px"
         img.style.height = "75px"
         img.draggable = false
         img.classList.add("image-main")
-        img.classList.add("utility-main")
+
+        img.classList.add("main")
+
         img.style.userSelect = "none"
+       // img.style.zIndex = "2"
         let input = document.createElement("input")
         input.classList.add("image-input")
         input.type = "file"
         input.accept = "image/jpeg, image/png, image/jpg"
         input.classList.add("hidden")
         img.appendChild(input)
-        let div = this.createElement('div', { className: 'image drag', draggable: false }, imgStyles)
-        div.style.width = "150px"
-        div.style.height = "150px"
+        let div = this.createElement('div', { className: 'utility image drag', draggable: false }, imgStyles)
+        div.style.width = img.style.width
+        div.style.height = img.style.height
+        div.style.zIndex = "1"
+        div.layer = "1"
         div.appendChild(img)
         page.appendChild(div);
         let utility = this.getUtility(div)

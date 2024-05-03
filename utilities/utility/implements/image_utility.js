@@ -13,14 +13,17 @@ export default class ImageUtility extends Utility {
 
 
     selectElement = () => {
-        this.functions.imageBackendFunction.disableDragMode(this.element.querySelector(".utility-main"))
-        this.element.querySelector(".image-main").style.border = "2px solid red"
+
+        document.getElementById("page").classList.add("editing")
+        this.functions.imageBackendFunction.disableDragMode(this.element)
+     //   this.element.querySelector(".image-main").style.border = "3px solid red"
         this.functions.imageBackendFunction.attachFileInputHandler(this.element)
 
     }
 
     deselectElement = () => {
-        this.functions.imageBackendFunction.enableDragMode(this.element.querySelector(".utility-main"))
+        document.getElementById("page").classList.remove("editing")
+        this.functions.imageBackendFunction.enableDragMode(this.element)
         this.element.querySelector(".image-main").style.border = "none"
         this.functions.imageBackendFunction.removeFileInputHandler(this.element)
         this.deconstructToolbar()
@@ -61,18 +64,19 @@ export default class ImageUtility extends Utility {
 
   
     initEnableImageResize = () => {
-        let onBoxResize = this.functions.boxResizeFunction.onImageDrag
+        let onBoxResize = this.functions.boxResizeFunction.onImageDrag.bind(this.element)
         let element = this.element
+        let toolbar = this.toolbar
       //  console.log(element)
         this.toolbar.resizeButton.addEventListener("mousedown", (event) => {
             // Initiate resizing - attach mousemove to document
-            element.addEventListener("mousemove", onBoxResize);
+            toolbar.resizeButton.addEventListener("mousemove", onBoxResize);
             event.preventDefault(); // Prevent default drag behavior
         });
 
         document.addEventListener("mouseup", () => {
             // End resizing - remove mousemove from document
-            element.removeEventListener("mousemove", onBoxResize);
+            toolbar.resizeButton.removeEventListener("mousemove", onBoxResize);
         });
     }
 

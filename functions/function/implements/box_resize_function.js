@@ -4,7 +4,7 @@ export default class BoxResizeFunction extends Function {
     onImageDrag({ movementX, movementY }) {
         let container = document.getElementById("page");
         let containerRect = container.getBoundingClientRect();
-
+        let resizeButton = document.getElementById("page").querySelector(".resize-popup")
         let elementStyles = window.getComputedStyle(this);
         let elementWidth = parseFloat(elementStyles.width) || 0; // Use 0 if width is not defined
         let elementHeight = parseFloat(elementStyles.height) || 0; // Use 0 if height is not defined
@@ -27,6 +27,9 @@ export default class BoxResizeFunction extends Function {
 
         let imageWidth = parseFloat(this.querySelector(".image-main").style.width) || 0; // Use 0 if width is not defined
         let imageHeight = parseFloat(this.querySelector(".image-main").style.height) || 0; // Use 0 if height is not defined
+
+        resizeButton.style.left = (movementX + parseInt(resizeButton.style.left)) + "px";
+        resizeButton.style.top = (movementX + parseInt(resizeButton.style.top)) + "px";
 
         let newImageWidth = imageWidth + movementX
         let newImageHeight = imageHeight + movementY

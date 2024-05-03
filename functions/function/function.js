@@ -3,6 +3,7 @@ export default class Function extends FunctionPrototype{
 
     constructor() {
         super()
+
     }
 
     enableDragMode = (element) => {
@@ -10,6 +11,7 @@ export default class Function extends FunctionPrototype{
         element.style.userSelect = "none"
         this.element = element
         this.dragElement(element)
+
     }
 
     disableDragMode = (element) => {
@@ -21,28 +23,39 @@ export default class Function extends FunctionPrototype{
 
     disableDragElement = (elmnt) => {
         
-        elmnt.onmousedown = null
+        elmnt.querySelector(".main").onmousedown = null
+        
     }
 
     dragElement = (elmnt) => {
 
 
-        elmnt.onmousedown = this.dragElementDown
-        elmnt.onmouseleave = this.stopDrag
-        elmnt.onmouseup = this.stopDrag
+        elmnt.querySelector(".main").onmousedown = this.dragElementDown
+        elmnt.querySelector(".main").onmouseleave = this.stopDrag
+        elmnt.querySelector(".main").onmouseup = this.stopDrag
 
     }
 
     stopDrag = (event) => {
         this.element.querySelector(".main").style.border = "none"
         document.getElementById("page").classList.remove("dragging")
-        event.currentTarget.removeEventListener("mousemove", this.onMouseDrag)
+        event.currentTarget.removeEventListener("mousemove", this.drag)
+        this.element.style.zIndex = document.getElementById("page").querySelectorAll(".utility").length + 1 + "";
     }
 
     dragElementDown = (event) => {
+        let page = document.getElementById("page")
+        page.classList.add("dragging")
+        this.drag = this.onMouseDrag.bind(this.element)
+       
         this.element.querySelector(".main").style.border = "2px red solid"
-        document.getElementById("page").classList.add("dragging")
-        event.currentTarget.addEventListener("mousemove", this.onMouseDrag)
+        let utilities = page.querySelectorAll(".utility")
+        for (let y = 0; y < utilities.length; y++) {
+            
+        }
+        this.element.style.zIndex = "999"
+        event.currentTarget.addEventListener("mousemove", this.drag)
+      
 
     }
 
@@ -51,6 +64,8 @@ export default class Function extends FunctionPrototype{
         let container = document.getElementById("page");
         let containerRect = container.getBoundingClientRect();
         let utilityList = container.querySelectorAll(".utility")
+
+       
         
         let elementStyles = window.getComputedStyle(this);
         let elementLeft = parseFloat(elementStyles.left) || 0; // Use 0 if left is not defined
@@ -69,24 +84,25 @@ export default class Function extends FunctionPrototype{
         // Ensure the element stays within the boundaries
         newLeft = Math.max(minLeft, Math.min(newLeft, maxLeft));
         newTop = Math.max(minTop, Math.min(newTop, maxTop));
-        let oldLeft = this.style.left
-        let oldTop = this.style.top 
+        const oldLeft = this.style.left
+        const oldTop = this.style.top 
         // Update the element's position
         this.style.left = `${newLeft}px`;
         this.style.top = `${newTop}px`;
 
         let utilityCollision = false 
         let newRect = this.getBoundingClientRect()
+        
         for (let x = 0; x < utilityList.length; x++) {
-            if (utilityList[x].style.zIndex == this.style.zIndex) {
+            if ((utilityList[x].layer == this.layer) && utilityList[x] != this) {
                 let utilityRect = utilityList[x].getBoundingClientRect()
                 let rect1 = newRect
                 let rect2 = utilityRect
                 console.log("same layer collision possible")
-                if (!(rect2.getX() > rect1.getX() + rect1.getWidth() ||
-                    rect.getX() + rect2.getWidth() < rect1.getX() ||
-                    rect.getY() > rect1.getY() + rect1.getHeight() ||
-                    rect2.getY() + rect2.getHeight < rect1.getY())) {
+                if (!(rect2.x > rect1.x + rect1.width ||
+                    rect2.x + rect2.width < rect1.x ||
+                    rect2.y > rect1.y + rect1.height ||
+                    rect2.y + rect2.height < rect1.y)) {
                     utilityCollision = true
                     console.log("isColliding") 
                 }
@@ -96,8 +112,9 @@ export default class Function extends FunctionPrototype{
         }
 
         if (utilityCollision) {
-            this.style.left = `${oldLeft}px`;
-            this.style.top = `${oldTop}px`;
+            console.log("resetting old positions")
+            this.style.left = oldLeft
+            this.style.top = oldTop
         }
     }
 }

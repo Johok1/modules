@@ -11,13 +11,16 @@ export default class TextUtility extends Utility {
 
     selectElement = () => {
         document.getElementById("page").classList.add("editing")
+      
         this.functions.summernoteFunction.disableDragMode(this.element)
       //  this.element.querySelector(".textParagraph").style.border = "solid 2px red"
     }
 
     deselectElement = () => {
+        
         document.getElementById("page").classList.remove("editing")
-       // this.element.querySelector(".textParagraph").style.border = "none"
+      
+        // this.element.querySelector(".textParagraph").style.border = "none"
         this.functions.summernoteFunction.handleDisableEditText(this.element, this.constructToolbar)
         this.functions.summernoteFunction.enableDragMode(this.element)
         this.deconstructToolbar()
@@ -45,17 +48,20 @@ export default class TextUtility extends Utility {
     }
 
     initBoxResizeBtn = () => {
-        let onBoxResize = this.functions.horizontalResizeFunction.onBoxResize
+        let onBoxResize = this.functions.horizontalResizeFunction.onBoxResize.bind(this.element)
         let element = this.element
+        let toolbar = this.toolbar
+        let updateToolbar = this.toolbar.updateToolbarPosition
         this.toolbar.resizeButton.addEventListener("mousedown", (event) => {
             // Initiate resizing - attach mousemove to document
-            element.addEventListener("mousemove", onBoxResize);
+            toolbar.resizeButton.addEventListener("mousemove", onBoxResize);
+          //  updateToolbar()
             event.preventDefault(); // Prevent default drag behavior
         });
 
         document.addEventListener("mouseup", () => {
             // End resizing - remove mousemove from document
-            element.removeEventListener("mousemove", onBoxResize);
+            toolbar.resizeButton.removeEventListener("mousemove", onBoxResize);
         });
 
     }

@@ -18,6 +18,8 @@ export default class UtilityFactory {
         const label = this.createElement('p', { draggable: false, className: 'textParagraph' }, {});
         label.appendChild(font);
         label.id = "par"
+       
+       
 
         const labelDivStyles = {
             width: '300px',  overflowY: 'auto',
@@ -26,14 +28,15 @@ export default class UtilityFactory {
         const labelDiv = this.createElement('div', { className: 'utility text drag' }, labelDivStyles);
 
         let parDiv = document.createElement("div")
-        parDiv.height = label.height
-        parDiv.width = label.width
+        parDiv.style.height = label.style.height
+        parDiv.style.width = label.style.width
         parDiv.appendChild(label)
         parDiv.classList.add("main")
-        
+       // parDiv.style.zIndex = "2"
+        labelDiv.layer = "1"
         labelDiv.appendChild(parDiv);
-        labelDiv.style.height = "235px"
-        labelDiv.style.width = "335px"
+        labelDiv.style.height = parDiv.style.height
+        labelDiv.style.width = parDiv.style.width
         page.appendChild(labelDiv);
         let utility = this.getUtility(labelDiv)
         utility.enableDrag()
@@ -51,6 +54,7 @@ export default class UtilityFactory {
         img.classList.add("image-main")
         img.classList.add("main")
         img.style.userSelect = "none"
+       // img.style.zIndex = "2"
         let input = document.createElement("input")
         input.classList.add("image-input")
         input.type = "file"
@@ -61,7 +65,7 @@ export default class UtilityFactory {
         div.style.width = "150px"
         div.style.height = "150px"
         div.style.zIndex = "1"
-        
+        div.layer = "1"
         div.appendChild(img)
         page.appendChild(div);
         let utility = this.getUtility(div)

@@ -13,10 +13,9 @@ export default class ImageUtility extends Utility {
 
 
     selectElement = () => {
-
         document.getElementById("page").classList.add("editing")
         this.functions.imageBackendFunction.disableDragMode(this.element)
-     //   this.element.querySelector(".image-main").style.border = "3px solid red"
+        //   this.element.querySelector(".image-main").style.border = "3px solid red"
         this.functions.imageBackendFunction.attachFileInputHandler(this.element)
 
     }
@@ -31,13 +30,13 @@ export default class ImageUtility extends Utility {
 
     constructToolbar = () => {
         this.toolbar.constructToolbar()
-       // this.attachFileInputHandler(this.functions.handleFileInput)
-      //  this.attachFileInputSubmitHandler()
+        // this.attachFileInputHandler(this.functions.handleFileInput)
+        //  this.attachFileInputSubmitHandler()
 
         this.initCancelSelectionBtn()
         this.initEnableImageResize()
-       
-       
+
+
 
     }
 
@@ -45,10 +44,10 @@ export default class ImageUtility extends Utility {
         this.toolbar.deconstructToolbar()
     }
 
-   
+
 
     enableDrag = () => {
-        this.functions.imageBackendFunction.enableDragMode(this.element.querySelector(".utility-main")
+        this.functions.imageBackendFunction.enableDragMode(this.element)
     }
     initCancelSelectionBtn = () => {
         this.toolbar.cancelSelectionBtn.addEventListener("click", this.deselectElement)
@@ -62,12 +61,12 @@ export default class ImageUtility extends Utility {
         this.toolbar.fileInput.addEventListener("change", handler)
     }
 
-  
+
     initEnableImageResize = () => {
         let onBoxResize = this.functions.boxResizeFunction.onImageDrag.bind(this.element)
         let element = this.element
         let toolbar = this.toolbar
-      //  console.log(element)
+        //  console.log(element)
         this.toolbar.resizeButton.addEventListener("mousedown", (event) => {
             // Initiate resizing - attach mousemove to document
             toolbar.resizeButton.addEventListener("mousemove", onBoxResize);
@@ -80,6 +79,6 @@ export default class ImageUtility extends Utility {
         });
     }
 
-   
+
 
 }

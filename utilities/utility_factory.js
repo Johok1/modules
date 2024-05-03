@@ -15,14 +15,14 @@ export default class UtilityFactory {
     constructTextUtility = () => {
         const page = document.getElementById("page");
         const font = this.createElement('font', { innerText: 'New Text' }, { color: 'black' });
-        const label = this.createElement('p', { draggable: false, className: 'textParagraph utility-main' }, {});
+        const label = this.createElement('p', { draggable: false, className: 'textParagraph' }, {});
         label.appendChild(font);
         label.id = "par"
-       
-       
+
+
 
         const labelDivStyles = {
-            width: '300px',  overflowY: 'auto',
+            width: '300px', overflowY: 'auto',
             position: 'absolute', wordWrap: 'break-word', zIndex: '1'
         };
         const labelDiv = this.createElement('div', { className: 'utility text drag' }, labelDivStyles);
@@ -32,9 +32,9 @@ export default class UtilityFactory {
         parDiv.style.width = label.style.width
         parDiv.appendChild(label)
         parDiv.classList.add("main")
-       // parDiv.style.zIndex = "2"
+        // parDiv.style.zIndex = "2"
         labelDiv.layer = "1"
-      
+
         labelDiv.appendChild(parDiv);
         labelDiv.style.height = parDiv.style.height
         labelDiv.style.width = parDiv.style.width
@@ -46,18 +46,16 @@ export default class UtilityFactory {
     // Method to construct the image utility
     constructImageUtility = () => {
         const page = document.getElementById("page");
-        const imgStyles = { };
+        const imgStyles = {};
         let img = this.createElement('img');
         img.style.backgroundColor = "transparent"
         img.style.width = "75px"
         img.style.height = "75px"
         img.draggable = false
         img.classList.add("image-main")
-
         img.classList.add("main")
-
         img.style.userSelect = "none"
-       // img.style.zIndex = "2"
+        // img.style.zIndex = "2"
         let input = document.createElement("input")
         input.classList.add("image-input")
         input.type = "file"

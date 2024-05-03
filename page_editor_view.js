@@ -3,25 +3,24 @@ import BackendManager from './backend/backend_manager.js';
 import PageSubmitTimer from './submit/page_submit_timer.js';
 
 
-
 class View {
     constructor() {
         this.initializeViewElements();
-      
+
         this.backendManager = new BackendManager()
         // Since select mode is enabled by default, ensure select functionalities are initialized
         this.controller = this.backendManager.controller
-        this.cookie = this.backendManager.cookie 
+        this.cookie = this.backendManager.cookie
         this.utilityHelper = new UtilityHelper()
         this.page = document.getElementById("page")
-       
 
-       this.loadPageContent()
+
+        this.loadPageContent()
 
 
         this.pageSubmitTimer = new PageSubmitTimer(page)
         this.pageSubmitTimer.setSubmitTimer(10)
-      
+
     }
 
     loadPageContent = () => {
@@ -60,7 +59,7 @@ class View {
                     for (let y = 0; y < imgList.length; y++) {
 
                         let imgId = imgList[y].getAttribute("id");
-                        console.log("imgList[y] " +imgList[y])
+                        console.log("imgList[y] " + imgList[y])
                         console.log("imgList[y] " + imgId)
                         console.log("filename  " + filename)
                         if (imgId === filename) {
@@ -79,7 +78,7 @@ class View {
                         } else {
                             console.log("imgId === filename false")
                         }
-
+                        
                     }
                     // You can perform further processing with the filename and data here
                     console.log(`Object ${index + 1}:`);
@@ -87,18 +86,18 @@ class View {
                     console.log(`File: ${file}`);
                     console.log(''); // Just for spacing between objects
                 });
-              
+
             })
     }
 
 
 
-    initializeViewElements(){
-      
+    initializeViewElements() {
+
         this.page = document.getElementById("page");
         this.toolbarDiv = document.getElementById("toolbarDiv");
-      
-      
+
+
     }
 
     registerAllHandlersSelect = () => {
@@ -108,8 +107,8 @@ class View {
         console.log("register " + register)
         register(select)
     }
-   
-  
+
+
     createTextBtnHandler() {
         this.utilityHelper.utilityFactory.constructTextUtility()
         this.registerAllHandlersSelect()
@@ -121,11 +120,9 @@ class View {
         this.registerAllHandlersSelect()
     }
 
-    
 
-   
+
+
 }
 
 const app = new View();
-
-

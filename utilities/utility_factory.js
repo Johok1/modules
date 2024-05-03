@@ -34,6 +34,7 @@ export default class UtilityFactory {
         parDiv.classList.add("main")
        // parDiv.style.zIndex = "2"
         labelDiv.layer = "1"
+      
         labelDiv.appendChild(parDiv);
         labelDiv.style.height = parDiv.style.height
         labelDiv.style.width = parDiv.style.width
@@ -62,8 +63,8 @@ export default class UtilityFactory {
         input.classList.add("hidden")
         img.appendChild(input)
         let div = this.createElement('div', { className: 'utility image drag', draggable: false }, imgStyles)
-        div.style.width = "150px"
-        div.style.height = "150px"
+        div.style.width = img.style.width
+        div.style.height = img.style.height
         div.style.zIndex = "1"
         div.layer = "1"
         div.appendChild(img)

@@ -79,7 +79,7 @@ export default class TextToolbar extends Toolbar{
         element2.style.top = (top - 10) + 'px';
     }
 
-    positionExitBtn = (element1, element2, spacing) => {
+    positionExitBtn = (element1, element2) => {
         // Get computed styles of the first element
         var styles = window.getComputedStyle(element1);
 

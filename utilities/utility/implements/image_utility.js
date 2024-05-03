@@ -63,18 +63,19 @@ export default class ImageUtility extends Utility {
 
   
     initEnableImageResize = () => {
-        let onBoxResize = this.functions.boxResizeFunction.onImageDrag
+        let onBoxResize = this.functions.boxResizeFunction.onImageDrag.bind(this.element)
         let element = this.element
+        let toolbar = this.toolbar
       //  console.log(element)
         this.toolbar.resizeButton.addEventListener("mousedown", (event) => {
             // Initiate resizing - attach mousemove to document
-            element.addEventListener("mousemove", onBoxResize);
+            toolbar.resizeButton.addEventListener("mousemove", onBoxResize);
             event.preventDefault(); // Prevent default drag behavior
         });
 
         document.addEventListener("mouseup", () => {
             // End resizing - remove mousemove from document
-            element.removeEventListener("mousemove", onBoxResize);
+            toolbar.resizeButton.removeEventListener("mousemove", onBoxResize);
         });
     }
 

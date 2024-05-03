@@ -8,11 +8,15 @@ export default class Function extends FunctionPrototype{
     enableDragMode = (element) => {
         element.contentEditable = false
         element.style.userSelect = "none"
+        element.querySelector(".utility-main").style.border = "solid 2px red"
+       
         this.dragElement(element)
     }
 
     disableDragMode = (element) => {
+
         this.disableDragElement(element)
+        element.querySelector(".utility-main").style.border = "none"
         //this.element.contentEditable = true
         element.style.userSelect = "default"
     }

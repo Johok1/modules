@@ -10,10 +10,12 @@ export default class TextUtility extends Utility {
     }
 
     selectElement = () => {
+
         document.getElementById("page").classList.add("editing")
       
         this.functions.summernoteFunction.disableDragMode(this.element)
       //  this.element.querySelector(".textParagraph").style.border = "solid 2px red"
+
     }
 
     deselectElement = () => {
@@ -22,7 +24,7 @@ export default class TextUtility extends Utility {
       
         // this.element.querySelector(".textParagraph").style.border = "none"
         this.functions.summernoteFunction.handleDisableEditText(this.element, this.constructToolbar)
-        this.functions.summernoteFunction.enableDragMode(this.element)
+        this.functions.summernoteFunction.enableDragMode(this.element.querySelector(".utility-main"))
         this.deconstructToolbar()
      
     }
@@ -40,7 +42,7 @@ export default class TextUtility extends Utility {
     }
 
     enableDrag = () => {
-        this.functions.summernoteFunction.enableDragMode(this.element)
+        this.functions.summernoteFunction.enableDragMode(this.element.querySelector(".utility-main"))
     }
 
     initCancelSelectionBtn = () => {

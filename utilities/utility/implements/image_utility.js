@@ -13,6 +13,7 @@ export default class ImageUtility extends Utility {
 
 
     selectElement = () => {
+
         document.getElementById("page").classList.add("editing")
         this.functions.imageBackendFunction.disableDragMode(this.element)
      //   this.element.querySelector(".image-main").style.border = "3px solid red"
@@ -47,7 +48,7 @@ export default class ImageUtility extends Utility {
    
 
     enableDrag = () => {
-        this.functions.imageBackendFunction.enableDragMode(this.element)
+        this.functions.imageBackendFunction.enableDragMode(this.element.querySelector(".utility-main")
     }
     initCancelSelectionBtn = () => {
         this.toolbar.cancelSelectionBtn.addEventListener("click", this.deselectElement)

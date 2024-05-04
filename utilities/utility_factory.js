@@ -12,7 +12,7 @@ export default class UtilityFactory {
     }
 
     // Method to construct the text utility
-    constructTextUtility = () => {
+    constructTextUtility = (layer) => {
         const page = document.getElementById("page");
         const font = this.createElement('font', { innerText: 'New Text' }, { color: 'black' });
         const label = this.createElement('p', { draggable: false, className: 'textParagraph' }, {});
@@ -23,7 +23,7 @@ export default class UtilityFactory {
 
         const labelDivStyles = {
             width: '300px', overflowY: 'auto',
-            position: 'absolute', wordWrap: 'break-word', zIndex: '1'
+            position: 'absolute', wordWrap: 'break-word', zIndex: layer
         };
         const labelDiv = this.createElement('div', { className: 'utility text drag' }, labelDivStyles);
 
@@ -33,7 +33,7 @@ export default class UtilityFactory {
         parDiv.appendChild(label)
         parDiv.classList.add("main")
         // parDiv.style.zIndex = "2"
-        labelDiv.layer = "1"
+        labelDiv.setAttribute("layer", layer)
 
         labelDiv.appendChild(parDiv);
         labelDiv.style.height = parDiv.style.height
@@ -44,7 +44,7 @@ export default class UtilityFactory {
     }
 
     // Method to construct the image utility
-    constructImageUtility = () => {
+    constructImageUtility = (layer) => {
         const page = document.getElementById("page");
         const imgStyles = {};
         let img = this.createElement('img');
@@ -65,8 +65,8 @@ export default class UtilityFactory {
         let div = this.createElement('div', { className: 'utility image drag', draggable: false }, imgStyles)
         div.style.width = img.style.width
         div.style.height = img.style.height
-        div.style.zIndex = "1"
-        div.layer = "1"
+        div.style.zIndex = layer
+        div.setAttribute("layer",layer)
         div.appendChild(img)
         page.appendChild(div);
         let utility = this.getUtility(div)

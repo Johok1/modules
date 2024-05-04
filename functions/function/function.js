@@ -19,7 +19,7 @@ export default class Function extends FunctionPrototype{
     disableDragMode = (element) => {
 
         this.disableDragElement(element)
-        element.querySelector(".utility-main").style.border = "none"
+        element.querySelector(".main").style.border = "2px red solid"
         //this.element.contentEditable = true
         element.style.userSelect = "default"
     }
@@ -98,7 +98,7 @@ export default class Function extends FunctionPrototype{
         let newRect = this.getBoundingClientRect()
         
         for (let x = 0; x < utilityList.length; x++) {
-            if ((utilityList[x].layer == this.layer) && utilityList[x] != this) {
+            if ((utilityList[x].getAttribute("layer") == this.getAttribute("layer")) && utilityList[x] != this) {
                 let utilityRect = utilityList[x].getBoundingClientRect()
                 let rect1 = newRect
                 let rect2 = utilityRect

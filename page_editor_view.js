@@ -29,19 +29,22 @@ class View {
         let register = this.utilityHelper.utilityHandlerModule.registerAllHandlers
         let reset = this.utilityHelper.utilityHandlerModule.resetAllElementHandlers
         let enableDragAll = this.utilityHelper.utilityTranslationModule.enableDragAll
+        let layerManager = this.utilityHelper.layerManagerModule 
         let loadPageImages = this.loadPageImages
         this.controller.getAccountPageContent(this.cookie.getCookie("memberId"), this.cookie.getCookie("pageId"))
             .then(response => response.text())
             .then(response => {
+                let layer = layerManager.getCurrentSelectedLayer()
                 page.innerHTML = response
-                console.log("a")
+           
                 reset(select)
-                enableDragAll()
-                console.log("b")
-                register(select)
-                console.log("c")
+
+                enableDragAll(layer)
+              
+                register(select, layer)
+           
                 loadPageImages()
-                console.log("d")
+            
             })
     }
 
@@ -103,23 +106,40 @@ class View {
     registerAllHandlersSelect = () => {
         const select = this.utilityHelper.utilitySelectionModule.selectFunc
         const register = this.utilityHelper.utilityHandlerModule.registerAllHandlers
+        const layerManager = this.utilityHelper.layerManagerModule
         console.log("select " + select)
         console.log("register " + register)
-        register(select)
+        register(select, layerManager.getCurrentSelectedLayer())
     }
 
 
     createTextBtnHandler() {
-        this.utilityHelper.utilityFactory.constructTextUtility()
+        let layerManager = this.utilityHelper.layerManagerModule
+        this.utilityHelper.utilityFactory.constructTextUtility(layerManager.getCurrentSelectedLayer())
         this.registerAllHandlersSelect()
 
     }
 
     createImageBtnHandler() {
-        this.utilityHelper.utilityFactory.constructImageUtility()
+        let layerManager = this.utilityHelper.layerManagerModule
+        this.utilityHelper.utilityFactory.constructImageUtility(layerManager.getCurrentSelectedLayer())
         this.registerAllHandlersSelect()
     }
 
+    hideLayer(layer) {
+        let layerManager = this.utilityHelper.layerManagerModule
+        layerManager.toggleHideLayer(layer)
+    }
+
+    selectLayer(layer) {
+        let layerManager = this.utilityHelper.layerManagerModule
+        layerManager.setSelectedLayer(layer)
+        this.utilityHelper.utilityHandlerModule.resetAllElementHandlers()
+        this.registerAllHandlersSelect()
+        this.utilityHelper.utilityTranslationModule.enableDragAll(layer)
+    }
+
+ 
 
 
 

@@ -44,7 +44,7 @@ export default class Function extends FunctionPrototype{
         this.element.querySelector(".main").style.border = "none"
         document.getElementById("page").classList.remove("dragging")
         event.currentTarget.removeEventListener("mousemove", this.drag)
-        this.element.style.zIndex = document.getElementById("page").querySelectorAll(".utility").length + 1 + "";
+        this.element.style.zIndex = this.element.getAttribute("layer")
     }
 
     dragElementDown = (event) => {

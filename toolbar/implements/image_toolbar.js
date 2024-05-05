@@ -18,12 +18,14 @@ export default class ImageToolbar extends Toolbar{
         this.resizeButton.classList.add("image-popup")
         this.resizeButton.classList.add("resize-popup")
         this.resizeButton.style.position = "absolute"
+        this.resizeButton.style.zIndex = "100"
        
 
         this.cancelSelectionBtn = document.createElement("button")
         this.cancelSelectionBtn.innerText = "Exit"
         this.cancelSelectionBtn.classList.add("image-popup")
         this.cancelSelectionBtn.style.position = "absolute"
+        this.cancelSelectionBtn.style.zIndex = "100"
 
         page.appendChild(this.resizeButton)
         page.appendChild(this.cancelSelectionBtn)

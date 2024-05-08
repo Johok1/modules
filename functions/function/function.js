@@ -50,31 +50,48 @@ export default class Function extends FunctionPrototype{
     dragElementDown = (event) => {
         let page = document.getElementById("page")
         page.classList.add("dragging")
-        this.drag = this.onMouseDrag.bind(this.element)
+        this.drag = this.onMouseDrag
        
         this.element.querySelector(".main").style.border = "2px red solid"
-        let utilities = page.querySelectorAll(".utility")
-        for (let y = 0; y < utilities.length; y++) {
-            
-        }
-        this.element.style.zIndex = "999"
+        
+        
         event.currentTarget.addEventListener("mousemove", this.drag)
-      
-
     }
 
 
-    onMouseDrag({ movementX, movementY }) {
-        let container = document.getElementById("page");
-        let containerRect = container.getBoundingClientRect();
-        let utilityList = container.querySelectorAll(".utility")
+
+    onMouseDrag = ({ movementX, movementY }) => {
+        let positionContainer = this.calculateNewPosition({ movementX, movementY })
+        let newLeft = positionContainer[0]
+        let newTop = positionContainer[1]
+        const oldLeft = this.element.style.left
+        const oldTop = this.element.style.top 
+        // Update the element's position
+        this.element.style.left = `${newLeft}px`;
+        this.element.top = `${newTop}px`;
 
        
-        
-        let elementStyles = window.getComputedStyle(this);
+        let newRect = this.element.getBoundingClientRect()
+        let utilityList = container.querySelectorAll(".utility")
+        let utilityCollision = this.isUtilityCollision(utilityList, newRect)
+
+        if (utilityCollision) {
+           
+            this.element.style.left = oldLeft
+            this.element.style.top = oldTop
+        }
+    }
+
+
+    calculateNewPosition = ({ movementX, movementY }) => {
+        let container = document.getElementById("page");
+        let containerRect = container.getBoundingClientRect();
+
+
+        let elementStyles = window.getComputedStyle(this.element);
         let elementLeft = parseFloat(elementStyles.left) || 0; // Use 0 if left is not defined
         let elementTop = parseFloat(elementStyles.top) || 0; // Use 0 if top is not defined
-        let elementRect = this.querySelector(".main").getBoundingClientRect()
+        let elementRect = this.element.querySelector(".main").getBoundingClientRect()
 
         let newLeft = elementLeft + movementX;
         let newTop = elementTop + movementY;
@@ -88,15 +105,13 @@ export default class Function extends FunctionPrototype{
         // Ensure the element stays within the boundaries
         newLeft = Math.max(minLeft, Math.min(newLeft, maxLeft));
         newTop = Math.max(minTop, Math.min(newTop, maxTop));
-        const oldLeft = this.style.left
-        const oldTop = this.style.top 
-        // Update the element's position
-        this.style.left = `${newLeft}px`;
-        this.style.top = `${newTop}px`;
 
-        let utilityCollision = false 
-        let newRect = this.getBoundingClientRect()
-        
+        return [newLeft, newTop]
+
+    }
+
+    isUtilityCollision = (utilityList, newRect) => {
+        let utilityCollision = false
         for (let x = 0; x < utilityList.length; x++) {
             if ((utilityList[x].getAttribute("layer") == this.getAttribute("layer")) && utilityList[x] != this) {
                 let utilityRect = utilityList[x].getBoundingClientRect()
@@ -108,17 +123,12 @@ export default class Function extends FunctionPrototype{
                     rect2.y > rect1.y + rect1.height ||
                     rect2.y + rect2.height < rect1.y)) {
                     utilityCollision = true
-                    console.log("isColliding") 
+                    console.log("isColliding")
                 }
             } else {
                 console.log("no collisions on different layers")
             }
         }
-
-        if (utilityCollision) {
-            console.log("resetting old positions")
-            this.style.left = oldLeft
-            this.style.top = oldTop
-        }
+        return utilityCollision;
     }
 }

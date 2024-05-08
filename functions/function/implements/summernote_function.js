@@ -35,11 +35,16 @@ export default class SummernoteFunction extends Function{
         this.preventSummernoteParagraphDeletion(parList)
         this.preventSummernotePasteWithFormatting(parList)
         this.preventSummernoteSelectAll(parList)
-      
+        this.moveSummernoteEditorToLayer(parList)
 
       
 
     }
+
+    moveSummernoteEditorToLayer = (editorElement) => {
+        editorElement.style.zIndex = this.element.getAttribute("layer")
+    }
+
 
     createSummernoteEditor = (top, left ,width, height) => {
         $('.summernote').summernote({
@@ -117,10 +122,7 @@ export default class SummernoteFunction extends Function{
 
     }
 
-    moveSummernoteEditorToLayer = (editorElement) => {
-        editorElement.style.zIndex = this.element.getAttribute("layer")
-    }
-
+   
 
     handleDisableEditText = () => {
         var markup = $('.summernote').summernote('code');

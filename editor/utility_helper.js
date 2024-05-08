@@ -11,10 +11,10 @@ export default class UtilityHelper {
 
         this.layerManagerModule = new LayerManagerModule()
         this.utilityFactory = new UtilityFactory()
-        this.utilityTranslationModule = new UtilityTranslationModule()
+        this.utilityTranslationModule = new UtilityLayerTranslationModule()
        
 
-        this.utilityHandlerModule = new UtilityHandlerModule()
+        this.utilityHandlerModule = new UtilityLayerHandlerModule()
         this.utilitySelectionModule = new UtilitySelectionModule()
       
        

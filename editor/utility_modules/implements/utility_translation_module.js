@@ -6,24 +6,22 @@ export default class UtilityTranslationModule extends UtilityTranslationModuleIn
         super()
     }
 
-    enableDragAll = (layer) => {
-        this.enableAllSelect(layer)
+    enableDragAll = () => {
+        this.enableAllSelect()
     }
 
-    enableAllSelect = (layer) => {
-        this.registerElementHandlers(".image", this.enableDrag, layer)
-        this.registerElementHandlers(".text", this.enableDrag, layer)
+    enableAllSelect = () => {
+        this.registerElementHandlers(".image", this.enableDrag)
+        this.registerElementHandlers(".text", this.enableDrag)
     }
 
-    enableDrag = (element,layer) => {
-        if (element.getAttribute("layer") == layer) {
-            this.editorUtilityInterface.utilityFactory.getUtility(element).enableDrag()
-        }
+    enableDrag = (element) => {
+        this.editorUtilityInterface.utilityFactory.getUtility(element).enableDrag()
     }
 
-    registerElementHandlers = (selector, handlerFunction, layer) => {
+    registerElementHandlers = (selector, handlerFunction) => {
         document.querySelectorAll(selector).forEach(element => {
-            handlerFunction.call(this, element, layer); // using call() to maintain 'this' context
+            handlerFunction.call(this, element); // using call() to maintain 'this' context
         });
     }
 }

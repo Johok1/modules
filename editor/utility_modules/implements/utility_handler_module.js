@@ -4,42 +4,42 @@ export default class UtilityHandlerModule extends UtilityHandlerModuleInterface 
         super()
     }
 
-    registerAllHandlers = (select, layer) => {
+    registerAllHandlers = (select) => {
 
-        this.registerElementHandlers(".image", this.registerImageHandlers, select, layer);
-        this.registerElementHandlers(".text", this.registerTextHandlers, select, layer);
+        this.registerElementHandlers(".image", this.registerImageHandlers, select);
+        this.registerElementHandlers(".text", this.registerTextHandlers, select);
     }
 
     resetAllElementHandlers = (select) => {
-        this.registerElementResetHandlers(".image", this.resetImageElementHandlers, select)
-        this.registerElementResetHandlers(".text", this.resetTextElementHandlers, select)
+        this.registerElementHandlers(".image", this.resetImageElementHandlers, select)
+        this.registerElementHandlers(".text", this.resetTextElementHandlers, select)
     }
 
-    registerImageHandlers = (imgElement, select, layer) => {
+    registerImageHandlers = (imgElement, select) => {
         if (imgElement.getAttribute('data-dblclick-attached') !== 'true') {
             const imageUtility = this.editorUtilityInterface.utilityFactory.getUtility(imgElement);
 
-            if (imgElement.getAttribute("layer") == layer) {
+           
                 // Attach the dblclick event listener
                 imgElement.addEventListener("dblclick", () => select(imageUtility));
 
                 // Set a custom attribute to indicate that the event listener has been attached
                 imgElement.setAttribute('data-dblclick-attached', 'true');
-            }
+            
         }
     }
 
-    registerTextHandlers = (textElement, select, layer) => {
+    registerTextHandlers = (textElement, select) => {
 
 
         // Check if the dblclick handler has not already been attached
         if (!textElement.hasAttribute('data-dblclick-attached')) {
             const textUtility = this.editorUtilityInterface.utilityFactory.getUtility(textElement);
 
-            if (textElement.getAttribute("layer") == layer) {
+           
                 textElement.addEventListener("dblclick", () => select(textUtility));
                 textElement.setAttribute('data-dblclick-attached', 'true'); // Mark it as attached
-            }
+            
         }
 
 
@@ -63,15 +63,11 @@ export default class UtilityHandlerModule extends UtilityHandlerModuleInterface 
         }
     }
 
-    registerElementHandlers = (selector, handlerFunction, select, layer) => {
-        document.querySelectorAll(selector).forEach(element => {
-            handlerFunction.call(this, element, select, layer); // using call() to maintain 'this' context
-        });
-    }
-
-    registerElementResetHandlers = (selector, handlerFunction, select) => {
+    registerElementHandlers = (selector, handlerFunction, select) => {
         document.querySelectorAll(selector).forEach(element => {
             handlerFunction.call(this, element, select); // using call() to maintain 'this' context
         });
     }
+
+    
 }
